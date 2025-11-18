@@ -13,12 +13,15 @@ theme:
     - content.code.copy
 
 nav:
-  - Level 0 - Beginner: LEVEL_0_BEGINNER.md
-  - Level 1 - Foundations: LEVEL_1_FOUNDATIONS.md
-  - Level 2 - Intermediate: LEVEL_2_INTERMEDIATE.md
-  - Level 3 - Advanced: LEVEL_3_ADVANCED.md
-  - Level 4 - Scalable: LEVEL_4_SCALABLE.md
-  - Level 5 - Expert: LEVEL_5_EXPERT.md
+  - Home: index.md
+
+  - Course Levels:
+      - Level 0 - Beginner: LEVEL_0_BEGINNER.md
+      - Level 1 - Foundations: LEVEL_1_FOUNDATIONS.md
+      - Level 2 - Intermediate: LEVEL_2_INTERMEDIATE.md
+      - Level 3 - Advanced: LEVEL_3_ADVANCED.md
+      - Level 4 - Scalable: LEVEL_4_SCALABLE.md
+      - Level 5 - Expert: LEVEL_5_EXPERT.md
 
   - Tools & Extras:
       - cURL Guide: CURL_GUIDE.md

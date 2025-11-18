@@ -1,0 +1,3348 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../LEVEL_0_BEGINNER/">
+      
+      
+        <link rel="next" href="../LEVEL_2_INTERMEDIATE/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Level 1 - Foundations - DRF Training Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#level-1-foundations-django-rest-basics" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="DRF Training Guide" class="md-header__button md-logo" aria-label="DRF Training Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DRF Training Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Level 1 - Foundations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="DRF Training Guide" class="md-nav__button md-logo" aria-label="DRF Training Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DRF Training Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Overview
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LEARNING_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LEVEL_0_BEGINNER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Level 0 - Beginner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Level 1 - Foundations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Level 1 - Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#goal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Goal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rest-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST Fundamentals
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="REST Fundamentals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is REST?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-status-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP Status Codes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requestresponse-cycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request/Response Cycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#django-project-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Django Project Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Django Project Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#understanding-django-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Django Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-files-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Files Explained
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-your-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Your Environment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Up Your Environment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-virtual-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create Virtual Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-install-django-and-drf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Install Django and DRF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-django-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create Django Project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-register-app-in-settingspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Register App in settings.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-run-initial-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Run Initial Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-django-rest-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing Django REST Framework
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing Django REST Framework">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-add-to-installed_apps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Add to INSTALLED_APPS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-configure-drf-settings-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Configure DRF Settings (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-verify-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Verify Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cors-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CORS Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CORS Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-cors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is CORS?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-django-cors-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing django-cors-headers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-add-to-installed_apps_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Add to INSTALLED_APPS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-add-cors-middleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Add CORS Middleware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-configure-cors-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Configure CORS Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Configure CORS Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#development-allow-all-origins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development (Allow All Origins)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#production-specific-origins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production (Specific Origins)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-additional-cors-settings-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Additional CORS Settings (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-cors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing CORS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-cors-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common CORS Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-cors-is-important" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why CORS is Important
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-are-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What are Models?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-model-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Model Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-field-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Field Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-and-applying-migrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating and Applying Migrations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-serializers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Serializers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding Serializers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-are-serializers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What are Serializers?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelserializer-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ModelSerializer (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serializer-class-more-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serializer Class (More Control)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serializer-field-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serializer Field Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Views
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding Views">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#view-evolution-in-drf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        View Evolution in DRF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-1-function-based-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 1: Function-Based View
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-apiview-class-based" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 2: APIView (Class-Based)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-3-generic-views-less-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 3: Generic Views (Less Code)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-4-viewsets-most-powerful" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 4: ViewSets (Most Powerful)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#url-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL Routing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="URL Routing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-url-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic URL Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-based-and-apiview-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function-Based and APIView URLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generic-views-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generic Views URLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewset-urls-with-router" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ViewSet URLs with Router
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-book-api-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step: Book API Implementation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step: Book API Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-book-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create Book Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-book-serializer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create Book Serializer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-views-using-viewset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create Views (Using ViewSet)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-configure-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Configure URLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-register-model-in-admin-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Register Model in Admin (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-test-your-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Test Your API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-task-api-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step: Task API Implementation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step: Task API Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-update-task-model-if-needed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Update Task Model (if needed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-task-serializer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create Task Serializer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-task-viewset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create Task ViewSet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-add-task-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Add Task URLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-test-task-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Test Task API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-response-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Response Formats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Response Formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-response-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Response Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-list-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom List Response
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-with-curl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing with cURL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#browsable-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Browsable API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exercises">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exercise-1-complete-book-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 1: Complete Book API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-2-enhance-task-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 2: Enhance Task API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-3-create-author-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 3: Create Author API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-4-custom-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 4: Custom Responses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-5-practice-problem-product-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 5: Practice Problem - Product API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trivia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trivia
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trivia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#question-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 5
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 6
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 7
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 8
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 9
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 10
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Problems
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Practice Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-1-understanding-the-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 1: Understanding the Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2-debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 2: Debugging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-3-model-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 3: Model Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-4-serializer-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem 4: Serializer Customization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#add-ons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add-ons
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Add-ons">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-on-1-custom-response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add-on 1: Custom Response Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-on-2-model-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add-on 2: Model Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-on-3-serializer-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add-on 3: Serializer Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LEVEL_2_INTERMEDIATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Level 2 - Intermediate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LEVEL_3_ADVANCED/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Level 3 - Advanced
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LEVEL_4_SCALABLE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Level 4 - Scalable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LEVEL_5_EXPERT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Level 5 - Expert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools & Extras
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools & Extras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CURL_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    cURL Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../POSTGRESQL_SETUP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="level-1-foundations-django-rest-basics">Level 1: Foundations - Django + REST Basics<a class="headerlink" href="#level-1-foundations-django-rest-basics" title="Permanent link">&para;</a></h1>
+<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
+<p>Understand Django, Django REST Framework, and build your first REST API. By the end of this level, you'll be able to create a fully functional CRUD API.</p>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#rest-fundamentals">REST Fundamentals</a></li>
+<li><a href="#django-project-structure">Django Project Structure</a></li>
+<li><a href="#setting-up-your-environment">Setting Up Your Environment</a></li>
+<li><a href="#installing-django-rest-framework">Installing Django REST Framework</a></li>
+<li><a href="#cors-configuration">CORS Configuration</a></li>
+<li><a href="#understanding-models">Understanding Models</a></li>
+<li><a href="#understanding-serializers">Understanding Serializers</a></li>
+<li><a href="#understanding-views">Understanding Views</a></li>
+<li><a href="#url-routing">URL Routing</a></li>
+<li><a href="#step-by-step-book-api-implementation">Step-by-Step: Book API Implementation</a></li>
+<li><a href="#step-by-step-task-api-implementation">Step-by-Step: Task API Implementation</a></li>
+<li><a href="#custom-response-formats">Custom Response Formats</a></li>
+<li><a href="#error-handling">Error Handling</a></li>
+<li><a href="#testing-with-curl">Testing with cURL</a></li>
+<li><a href="#browsable-api">Browsable API</a></li>
+<li><a href="#exercises">Exercises</a></li>
+<li><a href="#trivia">Trivia</a></li>
+<li><a href="#practice-problems">Practice Problems</a></li>
+<li><a href="#add-ons">Add-ons</a></li>
+</ol>
+<h2 id="rest-fundamentals">REST Fundamentals<a class="headerlink" href="#rest-fundamentals" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-rest">What is REST?<a class="headerlink" href="#what-is-rest" title="Permanent link">&para;</a></h3>
+<p>REST (Representational State Transfer) is an architectural style for designing web services. REST APIs use HTTP methods to perform operations on resources.</p>
+<h3 id="http-methods">HTTP Methods<a class="headerlink" href="#http-methods" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>Retrieve data</td>
+<td>Get list of books</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>Create new resource</td>
+<td>Create a new book</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>Full update</td>
+<td>Replace entire book</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>Partial update</td>
+<td>Update only book title</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>Delete resource</td>
+<td>Delete a book</td>
+</tr>
+</tbody>
+</table>
+<h3 id="http-status-codes">HTTP Status Codes<a class="headerlink" href="#http-status-codes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+<th>When to Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+<td>Successful GET, PUT, PATCH</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Created</td>
+<td>Successful POST</td>
+</tr>
+<tr>
+<td>204</td>
+<td>No Content</td>
+<td>Successful DELETE</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+<td>Invalid input data</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td>Missing/invalid authentication</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>Authenticated but no permission</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td>Resource doesn't exist</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Server Error</td>
+<td>Internal server error</td>
+</tr>
+</tbody>
+</table>
+<h3 id="requestresponse-cycle">Request/Response Cycle<a class="headerlink" href="#requestresponse-cycle" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code>Client Request → Django → URL Router → View → Serializer → Model → Database
+                                                                    ↓
+Client Response ← Django ← JSON Response ← Serializer ← Model ← Database
+</code></pre></div>
+
+<h2 id="django-project-structure">Django Project Structure<a class="headerlink" href="#django-project-structure" title="Permanent link">&para;</a></h2>
+<h3 id="understanding-django-files">Understanding Django Files<a class="headerlink" href="#understanding-django-files" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="nx">rest_api_learn</span><span class="o">/</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">manage</span><span class="p">.</span><span class="nx">py</span><span class="w">                 </span><span class="err">#</span><span class="w"> </span><span class="nx">Django</span><span class="w"> </span><span class="nx">management</span><span class="w"> </span><span class="nx">script</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">core</span><span class="o">/</span><span class="w">                     </span><span class="err">#</span><span class="w"> </span><span class="nx">Project</span><span class="w"> </span><span class="nx">settings</span><span class="w"> </span><span class="kn">package</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">__init__</span><span class="p">.</span><span class="nx">py</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">settings</span><span class="p">.</span><span class="nx">py</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="nx">Project</span><span class="w"> </span><span class="nx">configuration</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">urls</span><span class="p">.</span><span class="nx">py</span><span class="w">               </span><span class="err">#</span><span class="w"> </span><span class="nx">Root</span><span class="w"> </span><span class="nx">URL</span><span class="w"> </span><span class="nx">configuration</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">wsgi</span><span class="p">.</span><span class="nx">py</span><span class="w">               </span><span class="err">#</span><span class="w"> </span><span class="nx">WSGI</span><span class="w"> </span><span class="nx">configuration</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">asgi</span><span class="p">.</span><span class="nx">py</span><span class="w">               </span><span class="err">#</span><span class="w"> </span><span class="nx">ASGI</span><span class="w"> </span><span class="nx">configuration</span>
+<span class="err">├──</span><span class="w"> </span><span class="kn">api</span><span class="o">/</span><span class="w">                      </span><span class="err">#</span><span class="w"> </span><span class="nx">Your</span><span class="w"> </span><span class="nx">app</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">__init__</span><span class="p">.</span><span class="nx">py</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">models</span><span class="p">.</span><span class="nx">py</span><span class="w">             </span><span class="err">#</span><span class="w"> </span><span class="nx">Database</span><span class="w"> </span><span class="nx">models</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">views</span><span class="p">.</span><span class="nx">py</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="nx">View</span><span class="w"> </span><span class="nx">logic</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">serializers</span><span class="p">.</span><span class="nx">py</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="nx">DRF</span><span class="w"> </span><span class="nx">serializers</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">urls</span><span class="p">.</span><span class="nx">py</span><span class="w">               </span><span class="err">#</span><span class="w"> </span><span class="nx">App</span><span class="w"> </span><span class="nx">URL</span><span class="w"> </span><span class="nx">configuration</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">admin</span><span class="p">.</span><span class="nx">py</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="nx">Admin</span><span class="w"> </span><span class="kd">interface</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">migrations</span><span class="o">/</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="nx">Database</span><span class="w"> </span><span class="nx">migrations</span>
+<span class="err">└──</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">sqlite3</span><span class="w">                </span><span class="err">#</span><span class="w"> </span><span class="nx">SQLite</span><span class="w"> </span><span class="nx">database</span><span class="w"> </span><span class="p">(</span><span class="k">default</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="key-files-explained">Key Files Explained<a class="headerlink" href="#key-files-explained" title="Permanent link">&para;</a></h3>
+<p><strong>settings.py</strong>: Contains all project configuration
+- <code>INSTALLED_APPS</code>: List of installed Django apps
+- <code>DATABASES</code>: Database configuration
+- <code>MIDDLEWARE</code>: Request/response processing
+- <code>ROOT_URLCONF</code>: Root URL configuration</p>
+<p><strong>models.py</strong>: Define your database structure
+- Each class = database table
+- Each attribute = database column</p>
+<p><strong>views.py</strong>: Handle HTTP requests
+- Contains view functions/classes
+- Process requests and return responses</p>
+<p><strong>urls.py</strong>: URL routing
+- Maps URLs to views
+- Defines API endpoints</p>
+<h2 id="setting-up-your-environment">Setting Up Your Environment<a class="headerlink" href="#setting-up-your-environment" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-create-virtual-environment">Step 1: Create Virtual Environment<a class="headerlink" href="#step-1-create-virtual-environment" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create virtual environment</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+
+<span class="c1"># Activate (Linux/macOS)</span>
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+
+<span class="c1"># Activate (Windows)</span>
+venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+</code></pre></div>
+
+<h3 id="step-2-install-django-and-drf">Step 2: Install Django and DRF<a class="headerlink" href="#step-2-install-django-and-drf" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install packages</span>
+pip<span class="w"> </span>install<span class="w"> </span>django<span class="w"> </span>djangorestframework
+
+<span class="c1"># Or with specific versions</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">django</span><span class="o">==</span><span class="m">5</span>.2.8<span class="w"> </span><span class="nv">djangorestframework</span><span class="o">==</span><span class="m">3</span>.15.2
+
+<span class="c1"># Save requirements</span>
+pip<span class="w"> </span>freeze<span class="w"> </span>&gt;<span class="w"> </span>requirements.txt
+</code></pre></div>
+
+<h3 id="step-3-create-django-project">Step 3: Create Django Project<a class="headerlink" href="#step-3-create-django-project" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create project</span>
+django-admin<span class="w"> </span>startproject<span class="w"> </span>core<span class="w"> </span>.
+
+<span class="c1"># Create app</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>startapp<span class="w"> </span>api
+</code></pre></div>
+
+<h3 id="step-4-register-app-in-settingspy">Step 4: Register App in settings.py<a class="headerlink" href="#step-4-register-app-in-settingspy" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>  <span class="c1"># Add DRF</span>
+    <span class="s1">&#39;api&#39;</span><span class="p">,</span>             <span class="c1"># Add your app</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="step-5-run-initial-migration">Step 5: Run Initial Migration<a class="headerlink" href="#step-5-run-initial-migration" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Apply default migrations</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+
+<span class="c1"># Create superuser (optional)</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>createsuperuser
+</code></pre></div>
+
+<h2 id="installing-django-rest-framework">Installing Django REST Framework<a class="headerlink" href="#installing-django-rest-framework" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-add-to-installed_apps">Step 1: Add to INSTALLED_APPS<a class="headerlink" href="#step-1-add-to-installed_apps" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ... other apps ...</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;api&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="step-2-configure-drf-settings-optional">Step 2: Configure DRF Settings (Optional)<a class="headerlink" href="#step-2-configure-drf-settings-optional" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="n">REST_FRAMEWORK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;DEFAULT_RENDERER_CLASSES&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">&#39;rest_framework.renderers.JSONRenderer&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rest_framework.renderers.BrowsableAPIRenderer&#39;</span><span class="p">,</span>  <span class="c1"># For browsable API</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;DEFAULT_PARSER_CLASSES&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">&#39;rest_framework.parsers.JSONParser&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rest_framework.parsers.FormParser&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rest_framework.parsers.MultiPartParser&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;DEFAULT_PAGINATION_CLASS&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># We&#39;ll add pagination in Level 2</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="step-3-verify-installation">Step 3: Verify Installation<a class="headerlink" href="#step-3-verify-installation" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Start server</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>runserver
+
+<span class="c1"># Visit http://127.0.0.1:8000/</span>
+<span class="c1"># You should see Django welcome page</span>
+</code></pre></div>
+
+<p><strong>Why we verify</strong>: This confirms Django is installed correctly and the server can run. If you see the welcome page, everything is working!</p>
+<h2 id="cors-configuration">CORS Configuration<a class="headerlink" href="#cors-configuration" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-cors">What is CORS?<a class="headerlink" href="#what-is-cors" title="Permanent link">&para;</a></h3>
+<p><strong>CORS</strong> = Cross-Origin Resource Sharing</p>
+<p><strong>The Problem</strong>: By default, browsers block requests from one domain (origin) to another. This is a security feature called the "Same-Origin Policy."</p>
+<p><strong>Example</strong>:
+- Your frontend runs on: <code>http://localhost:3000</code> (React app)
+- Your API runs on: <code>http://localhost:8000</code> (Django)
+- Browser blocks requests between them ❌</p>
+<p><strong>The Solution</strong>: CORS headers tell the browser "it's okay, allow this request."</p>
+<p><strong>Why this matters</strong>: 
+- Frontend and backend often run on different ports/domains
+- Without CORS, your frontend can't call your API
+- CORS is essential for any API that will be used by web applications</p>
+<h3 id="installing-django-cors-headers">Installing django-cors-headers<a class="headerlink" href="#installing-django-cors-headers" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install the package</span>
+pip<span class="w"> </span>install<span class="w"> </span>django-cors-headers
+
+<span class="c1"># Add to requirements.txt</span>
+pip<span class="w"> </span>freeze<span class="w"> </span>&gt;<span class="w"> </span>requirements.txt
+</code></pre></div>
+
+<p><strong>Why this package</strong>: It makes CORS configuration easy. You could configure it manually, but this package handles all the complexity.</p>
+<h3 id="step-1-add-to-installed_apps_1">Step 1: Add to INSTALLED_APPS<a class="headerlink" href="#step-1-add-to-installed_apps_1" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;corsheaders&#39;</span><span class="p">,</span>  <span class="c1"># Add this - must be before other apps</span>
+    <span class="s1">&#39;api&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<p><strong>Why order matters</strong>: <code>corsheaders</code> must be before other apps that might handle requests. Middleware order is important in Django.</p>
+<h3 id="step-2-add-cors-middleware">Step 2: Add CORS Middleware<a class="headerlink" href="#step-2-add-cors-middleware" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.middleware.security.SecurityMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;corsheaders.middleware.CorsMiddleware&#39;</span><span class="p">,</span>  <span class="c1"># Add this - must be near top</span>
+    <span class="s1">&#39;django.contrib.sessions.middleware.SessionMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.common.CommonMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.csrf.CsrfViewMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages.middleware.MessageMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<p><strong>Why middleware position matters</strong>: 
+- Middleware processes requests in order
+- CORS middleware must run early to add headers to responses
+- If it's too late, headers won't be added</p>
+<h3 id="step-3-configure-cors-settings">Step 3: Configure CORS Settings<a class="headerlink" href="#step-3-configure-cors-settings" title="Permanent link">&para;</a></h3>
+<h4 id="development-allow-all-origins">Development (Allow All Origins)<a class="headerlink" href="#development-allow-all-origins" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="c1"># For development only - allows all origins</span>
+<span class="n">CORS_ALLOW_ALL_ORIGINS</span> <span class="o">=</span> <span class="kc">True</span>
+</code></pre></div>
+
+<p><strong>Why this works for development</strong>: 
+- Quick to set up
+- Allows any frontend to connect
+- <strong>Never use in production!</strong> (security risk)</p>
+<h4 id="production-specific-origins">Production (Specific Origins)<a class="headerlink" href="#production-specific-origins" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="c1"># For production - specify allowed origins</span>
+<span class="n">CORS_ALLOW_ALL_ORIGINS</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">CORS_ALLOWED_ORIGINS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>      <span class="c1"># React dev server</span>
+    <span class="s2">&quot;http://localhost:5173&quot;</span><span class="p">,</span>      <span class="c1"># Vite dev server</span>
+    <span class="s2">&quot;https://yourdomain.com&quot;</span><span class="p">,</span>     <span class="c1"># Production frontend</span>
+    <span class="s2">&quot;https://www.yourdomain.com&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Or use regex patterns</span>
+<span class="n">CORS_ALLOWED_ORIGIN_REGEXES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="sa">r</span><span class="s2">&quot;^https://.*\.yourdomain\.com$&quot;</span><span class="p">,</span>  <span class="c1"># All subdomains</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<p><strong>Why specific origins in production</strong>: 
+- Security: Only allow trusted domains
+- Prevents unauthorized sites from using your API
+- Protects user data</p>
+<h3 id="step-4-additional-cors-settings-optional">Step 4: Additional CORS Settings (Optional)<a class="headerlink" href="#step-4-additional-cors-settings-optional" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="c1"># Allow credentials (cookies, auth headers)</span>
+<span class="n">CORS_ALLOW_CREDENTIALS</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Allowed HTTP methods</span>
+<span class="n">CORS_ALLOW_METHODS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;DELETE&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OPTIONS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PATCH&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PUT&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Allowed headers</span>
+<span class="n">CORS_ALLOW_HEADERS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;accept&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;accept-encoding&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;authorization&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;content-type&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;dnt&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;origin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;user-agent&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;x-csrftoken&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;x-requested-with&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># How long browser can cache preflight response</span>
+<span class="n">CORS_PREFLIGHT_MAX_AGE</span> <span class="o">=</span> <span class="mi">86400</span>  <span class="c1"># 24 hours</span>
+</code></pre></div>
+
+<p><strong>Explanation of settings</strong>:
+- <strong>CORS_ALLOW_CREDENTIALS</strong>: Needed if you send cookies/auth tokens
+- <strong>CORS_ALLOW_METHODS</strong>: Which HTTP methods are allowed
+- <strong>CORS_ALLOW_HEADERS</strong>: Which headers frontend can send
+- <strong>CORS_PREFLIGHT_MAX_AGE</strong>: Reduces preflight requests (performance)</p>
+<h3 id="testing-cors">Testing CORS<a class="headerlink" href="#testing-cors" title="Permanent link">&para;</a></h3>
+<p><strong>Test with cURL</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Test CORS headers</span>
+curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Origin: http://localhost:3000&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s2">&quot;Access-Control-Request-Method: GET&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s2">&quot;Access-Control-Request-Headers: X-Requested-With&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-X<span class="w"> </span>OPTIONS<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>http://localhost:8000/api/books/<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-v
+
+<span class="c1"># Should see CORS headers in response:</span>
+<span class="c1"># Access-Control-Allow-Origin: http://localhost:3000</span>
+<span class="c1"># Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS</span>
+</code></pre></div>
+
+<p><strong>Test in Browser Console</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// In browser console (on frontend)</span>
+<span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:8000/api/books/&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+<span class="w">  </span><span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Error:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">));</span>
+</code></pre></div>
+
+<p><strong>Why test</strong>: 
+- Confirms CORS is working
+- Helps debug connection issues
+- Verifies headers are correct</p>
+<h3 id="common-cors-issues">Common CORS Issues<a class="headerlink" href="#common-cors-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: "CORS policy blocked"
+- <strong>Solution</strong>: Check <code>CORS_ALLOWED_ORIGINS</code> includes your frontend URL
+- <strong>Check</strong>: Verify middleware is in correct position</p>
+<p><strong>Problem</strong>: "Credentials not allowed"
+- <strong>Solution</strong>: Set <code>CORS_ALLOW_CREDENTIALS = True</code>
+- <strong>Check</strong>: Make sure origin is in allowed list (not using <code>*</code>)</p>
+<p><strong>Problem</strong>: "Method not allowed"
+- <strong>Solution</strong>: Add method to <code>CORS_ALLOW_METHODS</code>
+- <strong>Check</strong>: Verify you're using correct HTTP method</p>
+<h3 id="why-cors-is-important">Why CORS is Important<a class="headerlink" href="#why-cors-is-important" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Security</strong>: Prevents unauthorized sites from accessing your API</li>
+<li><strong>Flexibility</strong>: Allows frontend/backend separation</li>
+<li><strong>Modern Development</strong>: Essential for single-page applications (SPA)</li>
+<li><strong>Mobile Apps</strong>: Often need CORS for web-based APIs</li>
+</ol>
+<p><strong>Remember</strong>: 
+- Development: <code>CORS_ALLOW_ALL_ORIGINS = True</code> is fine
+- Production: Always specify exact origins
+- Test CORS before deploying</p>
+<h2 id="understanding-models">Understanding Models<a class="headerlink" href="#understanding-models" title="Permanent link">&para;</a></h2>
+<h3 id="what-are-models">What are Models?<a class="headerlink" href="#what-are-models" title="Permanent link">&para;</a></h3>
+<p>Models are Python classes that represent database tables. Django's ORM (Object-Relational Mapping) converts model classes to SQL tables.</p>
+<p><strong>Simple Explanation</strong>: 
+- <strong>Model</strong> = Blueprint for a database table
+- <strong>ORM</strong> = Magic that converts Python code to SQL
+- <strong>Table</strong> = Where data is stored (like a spreadsheet)
+- <strong>Row</strong> = One record (one book, one task)
+- <strong>Column</strong> = One field (title, author, price)</p>
+<p><strong>Why Models?</strong>
+- <strong>No SQL needed</strong>: Write Python instead of SQL
+- <strong>Type safety</strong>: Django validates data types
+- <strong>Migrations</strong>: Django tracks database changes
+- <strong>Relationships</strong>: Easy to connect models together</p>
+<p><strong>Real-world analogy</strong>: 
+- Model = Recipe (blueprint)
+- Table = Baking pan (where data goes)
+- Object = Cookie (one record)
+- Fields = Ingredients (title, author, etc.)</p>
+<h3 id="basic-model-example">Basic Model Example<a class="headerlink" href="#basic-model-example" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/models.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Book</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">published_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">isbn</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">updated_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-created_at&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="common-field-types">Common Field Types<a class="headerlink" href="#common-field-types" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field Type</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CharField</td>
+<td>Short text</td>
+<td><code>title = models.CharField(max_length=200)</code></td>
+</tr>
+<tr>
+<td>TextField</td>
+<td>Long text</td>
+<td><code>description = models.TextField()</code></td>
+</tr>
+<tr>
+<td>IntegerField</td>
+<td>Integer</td>
+<td><code>price = models.IntegerField()</code></td>
+</tr>
+<tr>
+<td>DecimalField</td>
+<td>Decimal</td>
+<td><code>price = models.DecimalField(max_digits=10, decimal_places=2)</code></td>
+</tr>
+<tr>
+<td>BooleanField</td>
+<td>True/False</td>
+<td><code>is_published = models.BooleanField(default=False)</code></td>
+</tr>
+<tr>
+<td>DateField</td>
+<td>Date</td>
+<td><code>published_date = models.DateField()</code></td>
+</tr>
+<tr>
+<td>DateTimeField</td>
+<td>Date + Time</td>
+<td><code>created_at = models.DateTimeField(auto_now_add=True)</code></td>
+</tr>
+<tr>
+<td>EmailField</td>
+<td>Email</td>
+<td><code>email = models.EmailField()</code></td>
+</tr>
+<tr>
+<td>URLField</td>
+<td>URL</td>
+<td><code>website = models.URLField()</code></td>
+</tr>
+<tr>
+<td>ForeignKey</td>
+<td>Many-to-One</td>
+<td><code>author = models.ForeignKey(User, on_delete=models.CASCADE)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="field-options">Field Options<a class="headerlink" href="#field-options" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Common options</span>
+<span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>              <span class="c1"># Allow NULL in database</span>
+    <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>             <span class="c1"># Allow empty in forms</span>
+    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;Untitled&#39;</span><span class="p">,</span>     <span class="c1"># Default value</span>
+    <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>            <span class="c1"># Must be unique</span>
+    <span class="n">db_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>          <span class="c1"># Create database index</span>
+    <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;Book Title&#39;</span><span class="p">,</span>  <span class="c1"># Human-readable name</span>
+    <span class="n">help_text</span><span class="o">=</span><span class="s1">&#39;Enter the book title&#39;</span><span class="p">,</span>  <span class="c1"># Help text</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<h3 id="creating-and-applying-migrations">Creating and Applying Migrations<a class="headerlink" href="#creating-and-applying-migrations" title="Permanent link">&para;</a></h3>
+<p><strong>What are Migrations?</strong></p>
+<p>Migrations are files that describe changes to your database structure. Think of them as version control for your database.</p>
+<p><strong>Why Migrations?</strong>
+- <strong>Track changes</strong>: Know what changed and when
+- <strong>Team collaboration</strong>: Everyone has same database structure
+- <strong>Rollback</strong>: Can undo changes if needed
+- <strong>Production</strong>: Apply same changes to production database</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create migration files</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>makemigrations
+</code></pre></div>
+
+<p><strong>What this does</strong>:
+- Looks at your models
+- Compares with current database
+- Creates migration file with changes
+- <strong>Doesn't change database yet!</strong></p>
+<p><strong>Why two steps?</strong>: 
+- <code>makemigrations</code> = Create the plan
+- <code>migrate</code> = Execute the plan
+- This lets you review changes before applying</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Apply migrations to database</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+</code></pre></div>
+
+<p><strong>What this does</strong>:
+- Reads migration files
+- Executes SQL to update database
+- Creates/updates tables
+- <strong>Actually changes the database!</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># See SQL that will be executed</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>sqlmigrate<span class="w"> </span>api<span class="w"> </span><span class="m">0001</span>
+</code></pre></div>
+
+<p><strong>Why view SQL</strong>: 
+- Understand what Django is doing
+- Debug migration issues
+- Learn SQL
+- Verify changes before applying</p>
+<h2 id="understanding-serializers">Understanding Serializers<a class="headerlink" href="#understanding-serializers" title="Permanent link">&para;</a></h2>
+<h3 id="what-are-serializers">What are Serializers?<a class="headerlink" href="#what-are-serializers" title="Permanent link">&para;</a></h3>
+<p>Serializers convert complex data types (like Django model instances) to Python native datatypes that can be easily rendered into JSON, XML, etc.</p>
+<p><strong>Simple Explanation</strong>:
+- <strong>Serialize</strong> = Convert Python object → JSON (for sending to client)
+- <strong>Deserialize</strong> = Convert JSON → Python object (for receiving from client)
+- <strong>Validation</strong> = Check if data is correct before saving</p>
+<p><strong>Why Serializers?</strong>
+- <strong>Format conversion</strong>: Python objects ↔ JSON
+- <strong>Data validation</strong>: Ensure data is correct
+- <strong>Field control</strong>: Choose which fields to include
+- <strong>Type conversion</strong>: Convert data types automatically</p>
+<p><strong>Real-world analogy</strong>:
+- Serializer = Translator
+- Python object = English
+- JSON = Spanish
+- Serializer translates between them</p>
+<p><strong>The Flow</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Client</span><span class="w"> </span><span class="nv">sends</span><span class="w"> </span><span class="nv">JSON</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Serializer</span><span class="w"> </span><span class="nv">validates</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Convert</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">Python</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Save</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">Database</span>
+<span class="nv">Database</span><span class="w"> </span><span class="nv">has</span><span class="w"> </span><span class="nv">Python</span><span class="w"> </span><span class="nv">object</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Serializer</span><span class="w"> </span><span class="nv">converts</span><span class="w"> </span>→<span class="w"> </span><span class="nv">JSON</span><span class="w"> </span>→<span class="w"> </span><span class="k">Send</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">Client</span>
+</code></pre></div>
+
+<h3 id="modelserializer-recommended">ModelSerializer (Recommended)<a class="headerlink" href="#modelserializer-recommended" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/serializers.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">serializers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Book</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;published_date&#39;</span><span class="p">,</span> <span class="s1">&#39;isbn&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">]</span>
+        <span class="c1"># Or use &#39;__all__&#39; to include all fields</span>
+        <span class="c1"># fields = &#39;__all__&#39;</span>
+
+        <span class="c1"># Exclude specific fields</span>
+        <span class="c1"># exclude = [&#39;created_at&#39;]</span>
+
+        <span class="c1"># Read-only fields</span>
+        <span class="n">read_only_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="serializer-class-more-control">Serializer Class (More Control)<a class="headerlink" href="#serializer-class-more-control" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/serializers.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">serializers</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">published_date</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">isbn</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create and return a new Book instance&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">validated_data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update and return an existing Book instance&quot;&quot;&quot;</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">published_date</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;published_date&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">published_date</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">isbn</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isbn&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">isbn</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">instance</span>
+</code></pre></div>
+
+<h3 id="serializer-field-types">Serializer Field Types<a class="headerlink" href="#serializer-field-types" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ExampleSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="c1"># Basic fields</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">price</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">quantity</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">is_available</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Date/Time fields</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">published_date</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+
+    <span class="c1"># Email and URL</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">EmailField</span><span class="p">()</span>
+    <span class="n">website</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">()</span>
+
+    <span class="c1"># Choice field</span>
+    <span class="n">STATUS_CHOICES</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;draft&#39;</span><span class="p">,</span> <span class="s1">&#39;Draft&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;published&#39;</span><span class="p">,</span> <span class="s1">&#39;Published&#39;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">ChoiceField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">STATUS_CHOICES</span><span class="p">)</span>
+
+    <span class="c1"># Nested serializer (we&#39;ll cover in Level 3)</span>
+    <span class="c1"># author = AuthorSerializer()</span>
+</code></pre></div>
+
+<h2 id="understanding-views">Understanding Views<a class="headerlink" href="#understanding-views" title="Permanent link">&para;</a></h2>
+<h3 id="view-evolution-in-drf">View Evolution in DRF<a class="headerlink" href="#view-evolution-in-drf" title="Permanent link">&para;</a></h3>
+<p>DRF provides multiple ways to create views, from simple to powerful:</p>
+<ol>
+<li><strong>Function-based views</strong> → Basic, explicit</li>
+<li><strong>APIView</strong> → Class-based, more control</li>
+<li><strong>Generic Views</strong> → Less code, common patterns</li>
+<li><strong>ViewSets</strong> → Most powerful, works with routers</li>
+</ol>
+<h3 id="method-1-function-based-view">Method 1: Function-Based View<a class="headerlink" href="#method-1-function-based-view" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">api_view</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="n">BookSerializer</span>
+
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">book_list</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all books or create a new book&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">books</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">BookSerializer</span><span class="p">(</span><span class="n">books</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">BookSerializer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">serializer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="method-2-apiview-class-based">Method 2: APIView (Class-Based)<a class="headerlink" href="#method-2-apiview-class-based" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="n">BookSerializer</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookListAPIView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all books or create a new book&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">books</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">BookSerializer</span><span class="p">(</span><span class="n">books</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">BookSerializer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">serializer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookDetailAPIView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve, update or delete a book&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">Book</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Http404</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+        <span class="n">book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">BookSerializer</span><span class="p">(</span><span class="n">book</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+        <span class="n">book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">BookSerializer</span><span class="p">(</span><span class="n">book</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">serializer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+        <span class="n">book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">book</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_204_NO_CONTENT</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="method-3-generic-views-less-code">Method 3: Generic Views (Less Code)<a class="headerlink" href="#method-3-generic-views-less-code" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">generics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="n">BookSerializer</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookListCreateView</span><span class="p">(</span><span class="n">generics</span><span class="o">.</span><span class="n">ListCreateAPIView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all books or create a new book&quot;&quot;&quot;</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">BookSerializer</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookRetrieveUpdateDestroyView</span><span class="p">(</span><span class="n">generics</span><span class="o">.</span><span class="n">RetrieveUpdateDestroyAPIView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve, update or delete a book&quot;&quot;&quot;</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">BookSerializer</span>
+</code></pre></div>
+
+<h3 id="method-4-viewsets-most-powerful">Method 4: ViewSets (Most Powerful)<a class="headerlink" href="#method-4-viewsets-most-powerful" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">viewsets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="n">BookSerializer</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ViewSet for viewing and editing Book instances&quot;&quot;&quot;</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">BookSerializer</span>
+</code></pre></div>
+
+<h2 id="url-routing">URL Routing<a class="headerlink" href="#url-routing" title="Permanent link">&para;</a></h2>
+<h3 id="basic-url-configuration">Basic URL Configuration<a class="headerlink" href="#basic-url-configuration" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/urls.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib</span><span class="w"> </span><span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;api/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s1">&#39;api.urls&#39;</span><span class="p">)),</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="function-based-and-apiview-urls">Function-Based and APIView URLs<a class="headerlink" href="#function-based-and-apiview-urls" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/urls.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;books/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">book_list</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;book-list&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;books/&lt;int:pk&gt;/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">book_detail</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;book-detail&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="c1"># Or for APIView</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;books/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">BookListAPIView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;book-list&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;books/&lt;int:pk&gt;/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">BookDetailAPIView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;book-detail&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="generic-views-urls">Generic Views URLs<a class="headerlink" href="#generic-views-urls" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/urls.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;books/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">BookListCreateView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;book-list-create&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;books/&lt;int:pk&gt;/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">BookRetrieveUpdateDestroyView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;book-detail&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="viewset-urls-with-router">ViewSet URLs with Router<a class="headerlink" href="#viewset-urls-with-router" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/urls.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.routers</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRouter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">DefaultRouter</span><span class="p">()</span>
+<span class="n">router</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;books&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">BookViewSet</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s1">&#39;book&#39;</span><span class="p">)</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">router</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span>
+<span class="p">]</span>
+
+<span class="c1"># This automatically creates:</span>
+<span class="c1"># GET    /api/books/          - List all books</span>
+<span class="c1"># POST   /api/books/          - Create new book</span>
+<span class="c1"># GET    /api/books/{id}/     - Retrieve book</span>
+<span class="c1"># PUT    /api/books/{id}/     - Update book</span>
+<span class="c1"># PATCH  /api/books/{id}/     - Partial update</span>
+<span class="c1"># DELETE /api/books/{id}/     - Delete book</span>
+</code></pre></div>
+
+<h2 id="step-by-step-book-api-implementation">Step-by-Step: Book API Implementation<a class="headerlink" href="#step-by-step-book-api-implementation" title="Permanent link">&para;</a></h2>
+<p>Let's build a complete Book API from scratch.</p>
+<h3 id="step-1-create-book-model">Step 1: Create Book Model<a class="headerlink" href="#step-1-create-book-model" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/models.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Book</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">published_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">isbn</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">updated_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-created_at&#39;</span><span class="p">]</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;Book&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="s1">&#39;Books&#39;</span>
+</code></pre></div>
+
+<p><strong>Create and apply migration:</strong></p>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>makemigrations
+python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+</code></pre></div>
+
+<h3 id="step-2-create-book-serializer">Step 2: Create Book Serializer<a class="headerlink" href="#step-2-create-book-serializer" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/serializers.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">serializers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Book</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;published_date&#39;</span><span class="p">,</span> <span class="s1">&#39;isbn&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;updated_at&#39;</span><span class="p">]</span>
+        <span class="n">read_only_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;updated_at&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="step-3-create-views-using-viewset">Step 3: Create Views (Using ViewSet)<a class="headerlink" href="#step-3-create-views-using-viewset" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">viewsets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="n">BookSerializer</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">BookSerializer</span>
+</code></pre></div>
+
+<h3 id="step-4-configure-urls">Step 4: Configure URLs<a class="headerlink" href="#step-4-configure-urls" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/urls.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.routers</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRouter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">DefaultRouter</span><span class="p">()</span>
+<span class="n">router</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;books&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">BookViewSet</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s1">&#39;book&#39;</span><span class="p">)</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">router</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/urls.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib</span><span class="w"> </span><span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;api/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s1">&#39;api.urls&#39;</span><span class="p">)),</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="step-5-register-model-in-admin-optional">Step 5: Register Model in Admin (Optional)<a class="headerlink" href="#step-5-register-model-in-admin-optional" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/admin.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib</span><span class="w"> </span><span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+
+<span class="nd">@admin</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BookAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;published_date&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">]</span>
+    <span class="n">list_filter</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;published_date&#39;</span><span class="p">]</span>
+    <span class="n">search_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="step-6-test-your-api">Step 6: Test Your API<a class="headerlink" href="#step-6-test-your-api" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Start server</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>runserver
+
+<span class="c1"># Test with cURL (see CURL_GUIDE.md for details)</span>
+curl<span class="w"> </span>http://localhost:8000/api/books/
+
+<span class="c1"># Or visit in browser</span>
+<span class="c1"># http://localhost:8000/api/books/</span>
+</code></pre></div>
+
+<h2 id="step-by-step-task-api-implementation">Step-by-Step: Task API Implementation<a class="headerlink" href="#step-by-step-task-api-implementation" title="Permanent link">&para;</a></h2>
+<p>Now let's adapt this to your existing Task model.</p>
+<h3 id="step-1-update-task-model-if-needed">Step 1: Update Task Model (if needed)<a class="headerlink" href="#step-1-update-task-model-if-needed" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/models.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Task</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">completed</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">updated_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-created_at&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+<p><strong>Create migration if you added fields:</strong></p>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>makemigrations
+python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+</code></pre></div>
+
+<h3 id="step-2-create-task-serializer">Step 2: Create Task Serializer<a class="headerlink" href="#step-2-create-task-serializer" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/serializers.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">serializers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Task</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">,</span> <span class="s1">&#39;completed&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;updated_at&#39;</span><span class="p">]</span>
+        <span class="n">read_only_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;updated_at&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="step-3-create-task-viewset">Step 3: Create Task ViewSet<a class="headerlink" href="#step-3-create-task-viewset" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">viewsets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSerializer</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">TaskSerializer</span>
+</code></pre></div>
+
+<h3 id="step-4-add-task-urls">Step 4: Add Task URLs<a class="headerlink" href="#step-4-add-task-urls" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/urls.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.routers</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRouter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">DefaultRouter</span><span class="p">()</span>
+<span class="n">router</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;books&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">BookViewSet</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s1">&#39;book&#39;</span><span class="p">)</span>
+<span class="n">router</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">TaskViewSet</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s1">&#39;task&#39;</span><span class="p">)</span>  <span class="c1"># Add this</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">router</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="step-5-test-task-api">Step 5: Test Task API<a class="headerlink" href="#step-5-test-task-api" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create a task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/api/tasks/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;title&quot;: &quot;Learn DRF&quot;, &quot;desc&quot;: &quot;Complete Level 1&quot;, &quot;completed&quot;: false}&#39;</span>
+
+<span class="c1"># List all tasks</span>
+curl<span class="w"> </span>http://localhost:8000/api/tasks/
+
+<span class="c1"># Get specific task</span>
+curl<span class="w"> </span>http://localhost:8000/api/tasks/1/
+
+<span class="c1"># Update task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>PATCH<span class="w"> </span>http://localhost:8000/api/tasks/1/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;completed&quot;: true}&#39;</span>
+
+<span class="c1"># Delete task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span>http://localhost:8000/api/tasks/1/
+</code></pre></div>
+
+<h2 id="custom-response-formats">Custom Response Formats<a class="headerlink" href="#custom-response-formats" title="Permanent link">&para;</a></h2>
+<h3 id="custom-response-structure">Custom Response Structure<a class="headerlink" href="#custom-response-structure" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">viewsets</span><span class="p">,</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSerializer</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">TaskSerializer</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perform_create</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+
+        <span class="c1"># Custom response</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span>
+            <span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Task created successfully&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="custom-list-response">Custom List Response<a class="headerlink" href="#custom-list-response" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">TaskSerializer</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_queryset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">())</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">queryset</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span>
+            <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">queryset</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+            <span class="s1">&#39;results&#39;</span><span class="p">:</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">})</span>
+</code></pre></div>
+
+<h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
+<h3 id="basic-error-handling">Basic Error Handling<a class="headerlink" href="#basic-error-handling" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/views.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">exception_handler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">status</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_exception_handler</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">exception_handler</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">custom_response_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;status_code&#39;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+                <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;An error occurred&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;details&#39;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">custom_response_data</span>
+
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+
+<p><strong>Add to settings.py:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/settings.py</span>
+<span class="n">REST_FRAMEWORK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;EXCEPTION_HANDLER&#39;</span><span class="p">:</span> <span class="s1">&#39;api.views.custom_exception_handler&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="validation-errors">Validation Errors<a class="headerlink" href="#validation-errors" title="Permanent link">&para;</a></h3>
+<p>DRF automatically handles validation errors. When serializer validation fails:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># This is handled automatically by DRF</span>
+<span class="n">serializer</span> <span class="o">=</span> <span class="n">TaskSerializer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="testing-with-curl">Testing with cURL<a class="headerlink" href="#testing-with-curl" title="Permanent link">&para;</a></h2>
+<p>See <a href="../CURL_GUIDE/">CURL_GUIDE.md</a> for detailed cURL examples. Here are quick examples:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># GET - List all tasks</span>
+curl<span class="w"> </span>http://localhost:8000/api/tasks/
+
+<span class="c1"># POST - Create task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/api/tasks/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;title&quot;: &quot;Test Task&quot;, &quot;desc&quot;: &quot;Description&quot;, &quot;completed&quot;: false}&#39;</span>
+
+<span class="c1"># GET - Retrieve task</span>
+curl<span class="w"> </span>http://localhost:8000/api/tasks/1/
+
+<span class="c1"># PATCH - Update task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>PATCH<span class="w"> </span>http://localhost:8000/api/tasks/1/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;completed&quot;: true}&#39;</span>
+
+<span class="c1"># DELETE - Delete task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span>http://localhost:8000/api/tasks/1/
+</code></pre></div>
+
+<h2 id="browsable-api">Browsable API<a class="headerlink" href="#browsable-api" title="Permanent link">&para;</a></h2>
+<p>DRF provides a browsable API interface. Visit any endpoint in your browser:</p>
+<div class="codehilite"><pre><span></span><code>http://localhost:8000/api/tasks/
+http://localhost:8000/api/books/
+</code></pre></div>
+
+<p>You'll see:
+- HTML form to test POST/PUT/PATCH
+- Response in JSON format
+- Available actions
+- Request/response examples</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<h3 id="exercise-1-complete-book-api">Exercise 1: Complete Book API<a class="headerlink" href="#exercise-1-complete-book-api" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create Book model with fields: title, author, published_date, isbn</li>
+<li>Create BookSerializer</li>
+<li>Create BookViewSet</li>
+<li>Configure URLs</li>
+<li>Test all CRUD operations with cURL</li>
+</ol>
+<h3 id="exercise-2-enhance-task-api">Exercise 2: Enhance Task API<a class="headerlink" href="#exercise-2-enhance-task-api" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Add <code>priority</code> field (choices: low, medium, high)</li>
+<li>Add <code>due_date</code> field</li>
+<li>Update TaskSerializer to include new fields</li>
+<li>Test with cURL</li>
+</ol>
+<h3 id="exercise-3-create-author-api">Exercise 3: Create Author API<a class="headerlink" href="#exercise-3-create-author-api" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create Author model (name, email, bio)</li>
+<li>Create AuthorSerializer and AuthorViewSet</li>
+<li>Add to URLs</li>
+<li>Test CRUD operations</li>
+</ol>
+<h3 id="exercise-4-custom-responses">Exercise 4: Custom Responses<a class="headerlink" href="#exercise-4-custom-responses" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Modify TaskViewSet to return custom response format</li>
+<li>Include success message and data</li>
+<li>Test with cURL</li>
+</ol>
+<h3 id="exercise-5-practice-problem-product-api">Exercise 5: Practice Problem - Product API<a class="headerlink" href="#exercise-5-practice-problem-product-api" title="Permanent link">&para;</a></h3>
+<p><strong>Challenge</strong>: Create a complete Product API with the following requirements:</p>
+<ol>
+<li><strong>Model</strong>: Create a <code>Product</code> model with:</li>
+<li><code>name</code> (CharField, max 200)</li>
+<li><code>description</code> (TextField, optional)</li>
+<li><code>price</code> (DecimalField, max 10 digits, 2 decimal places)</li>
+<li><code>stock</code> (IntegerField, default 0)</li>
+<li><code>is_available</code> (BooleanField, default True)</li>
+<li>
+<p><code>created_at</code> and <code>updated_at</code> (auto timestamps)</p>
+</li>
+<li>
+<p><strong>Serializer</strong>: Create <code>ProductSerializer</code> with:</p>
+</li>
+<li>All fields included</li>
+<li><code>id</code>, <code>created_at</code>, <code>updated_at</code> as read-only</li>
+<li>
+<p>Validation: price must be &gt; 0, stock must be &gt;= 0</p>
+</li>
+<li>
+<p><strong>ViewSet</strong>: Create <code>ProductViewSet</code> using <code>ModelViewSet</code></p>
+</li>
+<li>
+<p><strong>URLs</strong>: Configure routing with DefaultRouter</p>
+</li>
+<li>
+<p><strong>Testing</strong>: Test all CRUD operations:</p>
+</li>
+<li>Create a product</li>
+<li>List all products</li>
+<li>Retrieve a specific product</li>
+<li>Update a product (full and partial)</li>
+<li>Delete a product</li>
+</ol>
+<p><strong>Solution Hints</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Model</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Product</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">price</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">stock</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">is_available</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">updated_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Serializer validation</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_price</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">serializers</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;Price must be greater than 0&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
+</code></pre></div>
+
+<h2 id="trivia">Trivia<a class="headerlink" href="#trivia" title="Permanent link">&para;</a></h2>
+<p>Test your understanding with these questions:</p>
+<h3 id="question-1">Question 1<a class="headerlink" href="#question-1" title="Permanent link">&para;</a></h3>
+<p><strong>What does ORM stand for?</strong>
+- [ ] Object-Relational Mapping
+- [x] Object-Relational Mapping ✓
+- [ ] Object-Record Mapping
+- [ ] Object-Resource Mapping</p>
+<p><strong>Explanation</strong>: ORM = Object-Relational Mapping. It's the technique that converts Python objects to database records and vice versa.</p>
+<h3 id="question-2">Question 2<a class="headerlink" href="#question-2" title="Permanent link">&para;</a></h3>
+<p><strong>What is the purpose of <code>makemigrations</code>?</strong>
+- [x] Create migration files without changing database
+- [ ] Apply migrations to database
+- [ ] Delete old migrations
+- [ ] View migration history</p>
+<p><strong>Explanation</strong>: <code>makemigrations</code> creates migration files that describe database changes, but doesn't actually modify the database. Use <code>migrate</code> to apply them.</p>
+<h3 id="question-3">Question 3<a class="headerlink" href="#question-3" title="Permanent link">&para;</a></h3>
+<p><strong>Which HTTP method is used to create a new resource?</strong>
+- [ ] GET
+- [x] POST
+- [ ] PUT
+- [ ] DELETE</p>
+<p><strong>Explanation</strong>: POST is used to create new resources. GET retrieves, PUT/PATCH updates, DELETE removes.</p>
+<h3 id="question-4">Question 4<a class="headerlink" href="#question-4" title="Permanent link">&para;</a></h3>
+<p><strong>What does CORS stand for?</strong>
+- [ ] Cross-Origin Resource Sharing
+- [x] Cross-Origin Resource Sharing ✓
+- [ ] Cross-Origin Request Sharing
+- [ ] Cross-Origin Response Sharing</p>
+<p><strong>Explanation</strong>: CORS = Cross-Origin Resource Sharing. It allows browsers to make requests to APIs on different domains.</p>
+<h3 id="question-5">Question 5<a class="headerlink" href="#question-5" title="Permanent link">&para;</a></h3>
+<p><strong>What is the difference between <code>null=True</code> and <code>blank=True</code> in Django models?</strong>
+- [ ] They are the same
+- [x] <code>null=True</code> allows NULL in database, <code>blank=True</code> allows empty in forms
+- [ ] <code>null=True</code> is for strings, <code>blank=True</code> is for numbers
+- [ ] <code>null=True</code> is for forms, <code>blank=True</code> is for database</p>
+<p><strong>Explanation</strong>: 
+- <code>null=True</code> = Database can store NULL
+- <code>blank=True</code> = Forms/API can accept empty value
+- For CharField/TextField, you often need both: <code>null=True, blank=True</code></p>
+<h3 id="question-6">Question 6<a class="headerlink" href="#question-6" title="Permanent link">&para;</a></h3>
+<p><strong>What does <code>auto_now_add=True</code> do?</strong>
+- [ ] Updates the field every time the object is saved
+- [x] Sets the field to current time only when object is first created
+- [ ] Deletes the field after creation
+- [ ] Makes the field optional</p>
+<p><strong>Explanation</strong>: <code>auto_now_add=True</code> sets the field to the current timestamp when the object is first created. Use <code>auto_now=True</code> to update on every save.</p>
+<h3 id="question-7">Question 7<a class="headerlink" href="#question-7" title="Permanent link">&para;</a></h3>
+<p><strong>What is a ViewSet?</strong>
+- [ ] A single view function
+- [x] A class that provides CRUD operations for a model
+- [ ] A URL pattern
+- [ ] A serializer class</p>
+<p><strong>Explanation</strong>: ViewSet is a class that combines multiple view actions (list, create, retrieve, update, delete) into one class. It works with routers to automatically create URLs.</p>
+<h3 id="question-8">Question 8<a class="headerlink" href="#question-8" title="Permanent link">&para;</a></h3>
+<p><strong>What status code should you return when creating a new resource?</strong>
+- [ ] 200
+- [x] 201
+- [ ] 204
+- [ ] 400</p>
+<p><strong>Explanation</strong>: 201 Created is the standard status code for successful resource creation. 200 is for successful retrieval, 204 for successful deletion.</p>
+<h3 id="question-9">Question 9<a class="headerlink" href="#question-9" title="Permanent link">&para;</a></h3>
+<p><strong>What is the purpose of <code>read_only_fields</code> in a serializer?</strong>
+- [ ] Fields that can only be read from database
+- [x] Fields that are included in response but cannot be set via API
+- [ ] Fields that are hidden from response
+- [ ] Fields that are required</p>
+<p><strong>Explanation</strong>: <code>read_only_fields</code> are included when serializing (sending to client) but cannot be set when deserializing (receiving from client). Common for auto-generated fields like <code>id</code> and <code>created_at</code>.</p>
+<h3 id="question-10">Question 10<a class="headerlink" href="#question-10" title="Permanent link">&para;</a></h3>
+<p><strong>Why do we use virtual environments?</strong>
+- [ ] To make Python run faster
+- [x] To isolate project dependencies and avoid conflicts
+- [ ] To secure our code
+- [ ] To organize files</p>
+<p><strong>Explanation</strong>: Virtual environments isolate Python packages for each project, preventing conflicts when different projects need different versions of the same package.</p>
+<h2 id="practice-problems">Practice Problems<a class="headerlink" href="#practice-problems" title="Permanent link">&para;</a></h2>
+<h3 id="problem-1-understanding-the-flow">Problem 1: Understanding the Flow<a class="headerlink" href="#problem-1-understanding-the-flow" title="Permanent link">&para;</a></h3>
+<p><strong>Task</strong>: Explain what happens when a client sends a POST request to create a book. Trace the request through:
+1. URL routing
+2. View processing
+3. Serializer validation
+4. Model creation
+5. Response generation</p>
+<p><strong>Solution</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.</span><span class="w"> </span><span class="n">Client</span><span class="w"> </span><span class="n">sends</span><span class="w"> </span><span class="nb">POS</span><span class="n">T</span><span class="w"> </span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">books</span><span class="o">/</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">JSON</span><span class="w"> </span><span class="kd">data</span>
+<span class="mf">2.</span><span class="w"> </span><span class="n">URL</span><span class="w"> </span><span class="n">router</span><span class="w"> </span><span class="n">matches</span><span class="w"> </span><span class="n">pattern</span><span class="p">,</span><span class="w"> </span><span class="n">calls</span><span class="w"> </span><span class="n">BookViewSet</span><span class="mf">.</span><span class="n">create</span><span class="p">()</span>
+<span class="mf">3.</span><span class="w"> </span><span class="n">View</span><span class="w"> </span><span class="n">receives</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="kr">get</span><span class="n">s</span><span class="w"> </span><span class="n">serializer</span>
+<span class="mf">4.</span><span class="w"> </span><span class="n">Serializer</span><span class="w"> </span><span class="nb">val</span><span class="n">idates</span><span class="w"> </span><span class="kd">data</span><span class="w"> </span><span class="p">(</span><span class="n">checks</span><span class="w"> </span><span class="n">required</span><span class="w"> </span><span class="n">fields</span><span class="p">,</span><span class="w"> </span><span class="n">types</span><span class="p">)</span>
+<span class="mf">5.</span><span class="w"> </span><span class="kr">If</span><span class="w"> </span><span class="nb">val</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="n">serializer</span><span class="mf">.</span><span class="kr">save</span><span class="p">()</span><span class="w"> </span><span class="n">creates</span><span class="w"> </span><span class="n">Book</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="kd">data</span><span class="n">base</span>
+<span class="mf">6.</span><span class="w"> </span><span class="n">Serializer</span><span class="w"> </span><span class="n">converts</span><span class="w"> </span><span class="n">Book</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">JSON</span>
+<span class="mf">7.</span><span class="w"> </span><span class="n">View</span><span class="w"> </span><span class="kr">return</span><span class="n">s</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">JSON</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="mf">201</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="n">code</span>
+<span class="mf">8.</span><span class="w"> </span><span class="n">Client</span><span class="w"> </span><span class="n">receives</span><span class="w"> </span><span class="n">response</span>
+</code></pre></div>
+
+<h3 id="problem-2-debugging">Problem 2: Debugging<a class="headerlink" href="#problem-2-debugging" title="Permanent link">&para;</a></h3>
+<p><strong>Scenario</strong>: You created a Book model and serializer, but when you try to create a book via API, you get a 400 error saying "title is required" even though you're sending it.</p>
+<p><strong>Possible Issues</strong>:
+1. Field name mismatch (sending <code>book_title</code> but model expects <code>title</code>)
+2. Serializer not including <code>title</code> in fields
+3. Content-Type header missing (not <code>application/json</code>)
+4. JSON syntax error in request body</p>
+<p><strong>How to Debug</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check serializer fields</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">BookSerializer</span><span class="p">()</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="c1"># Check request data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Check validation errors</span>
+<span class="n">serializer</span> <span class="o">=</span> <span class="n">BookSerializer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="problem-3-model-design">Problem 3: Model Design<a class="headerlink" href="#problem-3-model-design" title="Permanent link">&para;</a></h3>
+<p><strong>Task</strong>: Design a model for a Blog Post with these requirements:
+- Title (required, max 200 chars)
+- Content (required, can be long)
+- Author name (required)
+- Published date (optional, can be set later)
+- Is published (boolean, default False)
+- View count (integer, starts at 0)
+- Created and updated timestamps</p>
+<p><strong>Solution</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BlogPost</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">author_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">published_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_published</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">view_count</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">updated_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+</code></pre></div>
+
+<h3 id="problem-4-serializer-customization">Problem 4: Serializer Customization<a class="headerlink" href="#problem-4-serializer-customization" title="Permanent link">&para;</a></h3>
+<p><strong>Task</strong>: Create a serializer that:
+- Includes all fields from Book model
+- Adds a computed field <code>is_recent</code> (True if created in last 7 days)
+- Excludes <code>updated_at</code> from response
+- Makes <code>isbn</code> optional when creating</p>
+<p><strong>Solution</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="n">is_recent</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">()</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Book</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;published_date&#39;</span><span class="p">,</span> <span class="s1">&#39;isbn&#39;</span><span class="p">,</span> 
+                  <span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;is_recent&#39;</span><span class="p">]</span>
+        <span class="n">read_only_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_is_recent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">seven_days_ago</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">created_at</span> <span class="o">&gt;=</span> <span class="n">seven_days_ago</span>
+</code></pre></div>
+
+<h2 id="add-ons">Add-ons<a class="headerlink" href="#add-ons" title="Permanent link">&para;</a></h2>
+<h3 id="add-on-1-custom-response-format">Add-on 1: Custom Response Format<a class="headerlink" href="#add-on-1-custom-response-format" title="Permanent link">&para;</a></h3>
+<p>Implement a consistent response format across all endpoints.</p>
+<h3 id="add-on-2-model-validation">Add-on 2: Model Validation<a class="headerlink" href="#add-on-2-model-validation" title="Permanent link">&para;</a></h3>
+<p>Add custom validation to models:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/models.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Task</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1"># ... fields ...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s1">&#39;Completed tasks must have a description&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_clean</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="add-on-3-serializer-validation">Add-on 3: Serializer Validation<a class="headerlink" href="#add-on-3-serializer-validation" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># api/serializers.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="c1"># ... fields ...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">serializers</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;Title must be at least 3 characters&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;completed&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;desc&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">serializers</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;Completed tasks must have a description&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</code></pre></div>
+
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<p>Congratulations! You've completed Level 1. You now know:</p>
+<ul>
+<li>✅ REST fundamentals</li>
+<li>✅ Django project structure</li>
+<li>✅ Models and migrations</li>
+<li>✅ Serializers</li>
+<li>✅ Views (APIView, Generic Views, ViewSets)</li>
+<li>✅ URL routing</li>
+<li>✅ Building CRUD APIs</li>
+</ul>
+<p><strong>Ready for Level 2?</strong> Continue to <a href="../LEVEL_2_INTERMEDIATE/">Level 2: Intermediate</a> to learn about authentication, permissions, filtering, and pagination!</p>
+<hr />
+<p><strong>Resources:</strong>
+- <a href="https://www.django-rest-framework.org/tutorial/quickstart/">DRF Official Tutorial</a>
+- <a href="https://docs.djangoproject.com/en/stable/topics/db/models/">Django Models Documentation</a>
+- <a href="https://www.django-rest-framework.org/api-guide/serializers/">DRF Serializers Guide</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.instant", "toc.integrate", "content.code.copy"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

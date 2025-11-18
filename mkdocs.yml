@@ -1,4 +1,8 @@
 site_name: DRF Training Guide
+
+site_url: https://pragnakalpdev54.github.io/Junior-Training/
+use_directory_urls: false
+
 theme:
   name: material
   features:
@@ -31,5 +35,3 @@ markdown_extensions:
   - admonition
   - footnotes
   - codehilite
-
-use_directory_urls: false

@@ -31,3 +31,5 @@ markdown_extensions:
   - admonition
   - footnotes
   - codehilite
+
+use_directory_urls: false

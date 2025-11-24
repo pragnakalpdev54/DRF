@@ -14,25 +14,44 @@ This guide uses **Task API** as the primary example throughout explanation secti
 
 You can apply all concepts to any model (Task, Book, Product, Post, etc.).
 
+## Class-Based Views (CBV) Approach
+
+**This guide follows the Class-Based Views (CBV) approach** throughout, which is the recommended and modern way to build DRF APIs:
+
+- ✅ **ViewSets** (`ModelViewSet`, `ReadOnlyViewSet`) - For CRUD operations
+- ✅ **Generic Views** (`CreateAPIView`, `ListAPIView`, etc.) - For specific operations
+- ✅ **APIView** - For custom logic when needed
+- ❌ **Function-based views** (`@api_view`) - Only used when absolutely necessary
+
+**Why Class-Based Views?**
+- **Reusable**: Easy to extend and customize
+- **DRY**: Less code duplication
+- **Built-in features**: Authentication, permissions, filtering work automatically
+- **Industry standard**: Most DRF projects use CBV
+- **Better organization**: Clear separation of concerns
+
+All examples in this guide use class-based views unless explicitly noted otherwise.
+
 ## Table of Contents
 
-1. [Django Authentication System](#django-authentication-system)
-2. [DRF Authentication Classes](#drf-authentication-classes)
-3. [JWT Authentication Setup](#jwt-authentication-setup)
-4. [Permissions](#permissions)
-5. [Filtering](#filtering)
-6. [Searching](#searching)
-7. [Ordering](#ordering)
-8. [Pagination](#pagination)
-9. [Step-by-Step: Secure Book API](#step-by-step-secure-book-api)
-10. [Step-by-Step: Secure Task API](#step-by-step-secure-task-api)
-11. [UserProfile API](#userprofile-api)
-12. [Throttling](#throttling)
-13. [Exception Handling](#exception-handling)
-14. [Testing Authenticated APIs](#testing-authenticated-apis)
-15. [Exercises](#exercises)
-16. [Common Errors and Solutions](#common-errors-and-solutions)
-17. [Add-ons](#add-ons)
+1. [Class-Based Views (CBV) Approach](#class-based-views-cbv-approach)
+2. [Django Authentication System](#django-authentication-system)
+3. [DRF Authentication Classes](#drf-authentication-classes)
+4. [JWT Authentication Setup](#jwt-authentication-setup)
+5. [Permissions](#permissions)
+6. [Filtering](#filtering)
+7. [Searching](#searching)
+8. [Ordering](#ordering)
+9. [Pagination](#pagination)
+10. [Step-by-Step: Secure Book API](#step-by-step-secure-book-api)
+11. [Step-by-Step: Secure Task API](#step-by-step-secure-task-api)
+12. [UserProfile API](#userprofile-api)
+13. [Throttling](#throttling)
+14. [Exception Handling](#exception-handling)
+15. [Testing Authenticated APIs](#testing-authenticated-apis)
+16. [Exercises](#exercises)
+17. [Common Errors and Solutions](#common-errors-and-solutions)
+18. [Add-ons](#add-ons)
 
 ## Django Authentication System
 
@@ -70,16 +89,24 @@ Django comes with a built-in User model that handles user accounts:
 from django.contrib.auth.models import User
 
 # User fields
-user.username  # Username
-user.email     # shed password
-user.first_nameEmail
-user.password  # Ha
-user.last_name
-user.is_staff  # Admin access
-user.is_active # Account status
-user.is_superuser
-user.date_joined
+user.username      # Username
+user.email         # Email address
+user.password      # Hashed password (never access directly)
+user.first_name    # First name
+user.last_name     # Last name
+user.is_staff      # Admin access (can access Django admin)
+user.is_active     # Account status (False = disabled account)
+user.is_superuser  # Superuser (all permissions)
+user.date_joined   # When user account was created
 ```
+
+**Explanation of key fields**:
+- **`username`**: Unique identifier for login
+- **`email`**: User's email address
+- **`password`**: Stored as hash (never plain text)
+- **`is_staff`**: Can access Django admin panel
+- **`is_active`**: If False, user cannot login
+- **`is_superuser`**: Has all permissions automatically
 
 ### Creating Users
 
@@ -1610,6 +1637,7 @@ class BookViewSet(viewsets.ModelViewSet):
 from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework import status
+from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
@@ -1692,7 +1720,8 @@ REST_FRAMEWORK = {
 
 ```python
 # api/exceptions.py
-from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated
+from rest_framework.views import exception_handler
+from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated, PermissionDenied
 from rest_framework import status
 
 def custom_exception_handler(exc, context):
@@ -2345,9 +2374,22 @@ class TaskViewSet(viewsets.ModelViewSet):
 class TaskViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]  # Must be logged in
 
-# Option 3: Check if user has permission
-if not request.user.has_perm('api.change_task'):
-    return Response({'error': 'Permission denied'}, status=403)
+# Option 3: Custom permission check in class-based view
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class TaskAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def patch(self, request, pk):
+        # Check custom permission
+        if not request.user.has_perm('api.change_task'):
+            return Response(
+                {'error': 'Permission denied'}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        # ... rest of logic
 ```
 
 **Prevention**: 
@@ -2565,22 +2607,28 @@ django.db.utils.IntegrityError: NOT NULL constraint failed: api_task.owner_id
 
 **How to Fix**:
 ```python
-# WRONG - Owner not set
-def create(self, request):
+# WRONG - Standalone function (not recommended, use CBV instead)
+# This is what NOT to do:
+def create_task(request):  # ❌ Function-based view
     serializer = TaskSerializer(data=request.data)
     serializer.save()  # ❌ Owner not set!
 
-# CORRECT - Set owner in perform_create
+# CORRECT - Class-based ViewSet approach (recommended)
 class TaskViewSet(viewsets.ModelViewSet):
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+    
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)  # ✅
+        serializer.save(owner=self.request.user)  # ✅ Owner set automatically
 
-# Or in serializer
+# Alternative: Set owner in serializer (also class-based)
 class TaskSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['owner'] = self.context['request'].user
         return super().create(validated_data)
 ```
+
+**Note**: Always use class-based views (`ViewSet`, `APIView`) instead of function-based views. The `perform_create()` method is part of the class-based ViewSet, not a standalone function.
 
 **Prevention**: Always set owner in `perform_create` or serializer's `create` method.
 
@@ -2603,19 +2651,30 @@ rest_framework.exceptions.MethodNotAllowed: Method 'PATCH' not allowed
 # Check what methods are allowed
 # ViewSet automatically supports: GET, POST, PUT, PATCH, DELETE
 
-# If using APIView, must define method
-class TaskAPIView(APIView):
-    def patch(self, request, pk):  # ✅ Define PATCH method
-        # ...
-
-# If using ViewSet, PATCH is automatic
+# Option 1: Use ViewSet (recommended - automatic method support)
 class TaskViewSet(viewsets.ModelViewSet):  # ✅ Supports PATCH automatically
-    # ...
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    # PATCH method works automatically, no need to define it
+
+# Option 2: Use APIView with explicit method (if you need custom logic)
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+class TaskAPIView(APIView):
+    def patch(self, request, pk):  # ✅ Must explicitly define PATCH method
+        task = Task.objects.get(pk=pk)
+        serializer = TaskSerializer(task, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
 ```
 
 **Prevention**: 
-- Use ViewSet for automatic method support
-- Or explicitly define methods in APIView
+- ✅ **Use ViewSet** for automatic method support (recommended)
+- ✅ **Use APIView** only when you need custom logic
+- ❌ **Avoid function-based views** - use class-based approach
 - Check allowed methods in view
 
 ---

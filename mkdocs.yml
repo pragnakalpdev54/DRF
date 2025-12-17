@@ -1,5 +1,4 @@
 site_name: DRF Training Guide
-
 site_url: https://pragnakalpdev54.github.io/DRF/
 use_directory_urls: false
 
@@ -16,16 +15,26 @@ nav:
   - Home: index.md
 
   - Course Levels:
-      - Level 0 - Beginner: LEVEL_0_BEGINNER.md
-      - Level 1 - Foundations: LEVEL_1_FOUNDATIONS.md
-      - Level 2 - Intermediate: LEVEL_2_INTERMEDIATE.md
-      - Level 3 - Advanced: LEVEL_3_ADVANCED.md
-      - Level 4 - Scalable: LEVEL_4_SCALABLE.md
-      - Level 5 - Expert: LEVEL_5_EXPERT.md
+      - Level 0 – Beginner: LEVEL_0_BEGINNER.md
+      - Level 1 – Foundations: LEVEL_1_FOUNDATIONS.md
+
+      - Level 2 – Intermediate:
+          - Part A – Core Concepts: LEVEL_2A_INTERMEDIATE.md
+          - Part B – Applied DRF: LEVEL_2B_INTERMEDIATE.md
+
+      - Level 3 – Advanced:
+          - Part A – Internals & Optimization: LEVEL_3A_ADVANCED.md
+          - Part B – Security & Performance: LEVEL_3B_ADVANCED.md
+
+      - Level 4 – Scalable Systems: LEVEL_4_SCALABLE.md
+      - Level 5 – Expert Level: LEVEL_5_EXPERT.md
 
   - Tools & Extras:
-      - cURL Guide: CURL_GUIDE.md
       - PostgreSQL Setup: POSTGRESQL_SETUP.md
+      - Postman Guide:
+          - Part 1 – Basics: POSTMAN_GUIDE_PART1_BASICS.md
+          - Part 2 – Advanced: POSTMAN_GUIDE_PART2_ADVANCED.md
+      - cURL Guide: CURL_GUIDE.md
 
 markdown_extensions:
   - toc:

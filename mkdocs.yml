@@ -44,3 +44,10 @@ markdown_extensions:
   - admonition
   - footnotes
   - codehilite
+
+extra:
+  generator: false
+  copyright: |
+    © 2025 Pragnakalp Dev  
+    DRF Training Guide
+    **Made by Rahul, Darshit, Nikunj, Dhvanil, Neel**

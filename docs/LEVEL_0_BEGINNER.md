@@ -223,14 +223,14 @@ data = loads('{"key": "value"}')  # Parse JSON string
 ```
 You (Client)          Waiter (API)          Kitchen (Database)
    │                       │                      │
-   │  "I want pizza"       │                      │
+   │  "I want pizza"        │                      │
    ├──────────────────────>│                      │
    │                       │  "Get pizza"         │
    │                       ├─────────────────────>│
    │                       │                      │
-   │                       │  "Here's pizza"      │
+   │                       │  "Here's pizza"       │
    │                       │<─────────────────────┤
-   │  "Here's your pizza"  │                      │
+   │  "Here's your pizza"   │                      │
    │<──────────────────────┤                      │
 ```
 

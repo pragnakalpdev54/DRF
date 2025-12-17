@@ -4,6 +4,26 @@
 
 Learn to build APIs that scale and integrate with external services. Master caching, API versioning, file uploads, async views, and API documentation. By the end of this level, you'll be able to build production-ready, scalable APIs.
 
+## Note on Examples
+
+This guide primarily uses the **Task API** as the main example throughout, building on the Task API from Levels 2 and 3:
+
+- **Task API**: Used as the primary example because:
+  - It's familiar from previous levels (Levels 2 and 3)
+  - Demonstrates scalable features well (caching, versioning, file uploads)
+  - Shows real-world production patterns
+  - Allows incremental learning (building on what you know)
+  
+- **Other examples**: Some sections may reference Book API or other models when demonstrating specific patterns that are better illustrated with different examples.
+
+**Why Task API?**
+- **Continuity**: Builds on your existing knowledge from Levels 2-3
+- **Practical**: Task management is a common real-world use case
+- **Scalable**: Tasks demonstrate caching, versioning, and file uploads naturally
+- **Progressive**: You can see how a simple API evolves into a production-ready system
+
+All concepts apply to any API (Book, Product, Post, etc.). The patterns are universal.
+
 ## Table of Contents
 
 1. [Custom Middleware](#custom-middleware)

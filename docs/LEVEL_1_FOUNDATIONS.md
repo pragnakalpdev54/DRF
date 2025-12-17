@@ -24,7 +24,8 @@ Understand Django, Django REST Framework, and build your first REST API. By the 
 16. [Exercises](#exercises)
 17. [Trivia](#trivia)
 18. [Practice Problems](#practice-problems)
-19. [Add-ons](#add-ons)
+19. [Common Errors and Solutions](#common-errors-and-solutions)
+20. [Add-ons](#add-ons)
 
 ## REST Fundamentals
 
@@ -1517,6 +1518,505 @@ class TaskSerializer(serializers.ModelSerializer):
         return data
 ```
 
+## Common Errors and Solutions
+
+### Error 1: `ModuleNotFoundError: No module named 'rest_framework'`
+
+**Error Message**:
+```
+ModuleNotFoundError: No module named 'rest_framework'
+```
+
+**Why This Happens**:
+- DRF is not installed
+- Virtual environment not activated
+- Installing in wrong environment
+
+**How to Fix**:
+```bash
+# 1. Activate virtual environment
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate  # Windows
+
+# 2. Install DRF
+pip install djangorestframework
+
+# 3. Verify installation
+pip list | grep djangorestframework
+
+# 4. Make sure it's in INSTALLED_APPS
+# core/settings.py
+INSTALLED_APPS = [
+    # ...
+    'rest_framework',  # Must be here!
+]
+```
+
+**Prevention**: Always activate virtual environment before installing packages.
+
+---
+
+### Error 2: `django.core.exceptions.ImproperlyConfigured: Application labels aren't unique`
+
+**Error Message**:
+```
+django.core.exceptions.ImproperlyConfigured: Application labels aren't unique, duplicates: api
+```
+
+**Why This Happens**:
+- App added to `INSTALLED_APPS` multiple times
+- Typo in app name causing duplicate
+
+**How to Fix**:
+```python
+# core/settings.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    # ... other apps ...
+    'rest_framework',
+    'api',  # Only once!
+    # 'api',  # Remove duplicate!
+]
+```
+
+**Prevention**: Check `INSTALLED_APPS` for duplicates before running server.
+
+---
+
+### Error 3: `django.db.utils.OperationalError: no such table: api_book`
+
+**Error Message**:
+```
+django.db.utils.OperationalError: no such table: api_book
+```
+
+**Why This Happens**:
+- Model created but migrations not run
+- Migrations created but not applied
+- Database doesn't have the table yet
+
+**How to Fix**:
+```bash
+# 1. Create migrations
+python manage.py makemigrations
+
+# 2. Apply migrations
+python manage.py migrate
+
+# 3. Verify table exists (optional)
+python manage.py dbshell
+# Then: .tables (SQLite) or \dt (PostgreSQL)
+```
+
+**Prevention**: Always run `makemigrations` and `migrate` after creating/modifying models.
+
+---
+
+### Error 4: `AttributeError: 'QuerySet' object has no attribute 'title'`
+
+**Error Message**:
+```
+AttributeError: 'QuerySet' object has no attribute 'title'
+```
+
+**Why This Happens**:
+- Trying to access attribute on QuerySet instead of model instance
+- Forgot to use `.get()` or `.first()` to get single object
+
+**Example of Wrong Code**:
+```python
+# WRONG - books is a QuerySet, not a Book object
+books = Book.objects.all()
+print(books.title)  # ❌ Error!
+
+# CORRECT - Get single object
+book = Book.objects.get(id=1)
+print(book.title)  # ✅ Works!
+
+# Or iterate over QuerySet
+books = Book.objects.all()
+for book in books:
+    print(book.title)  # ✅ Works!
+```
+
+**How to Fix**:
+```python
+# Option 1: Get single object
+book = Book.objects.get(id=1)
+
+# Option 2: Get first object
+book = Book.objects.first()
+
+# Option 3: Iterate over QuerySet
+for book in Book.objects.all():
+    print(book.title)
+```
+
+**Prevention**: Remember that `.all()`, `.filter()` return QuerySets, not objects.
+
+---
+
+### Error 5: `serializers.ValidationError: {'title': ['This field is required.']}`
+
+**Error Message**:
+```
+serializers.ValidationError: {'title': ['This field is required.']}
+```
+
+**Why This Happens**:
+- Required field not sent in request
+- Field name mismatch (sending `book_title` but expecting `title`)
+- Content-Type header missing (not `application/json`)
+
+**How to Fix**:
+```python
+# Check what fields are required
+serializer = BookSerializer()
+print(serializer.fields)  # See all fields
+
+# Check request data
+print(request.data)  # What was actually sent
+
+# Make sure Content-Type is set
+# In cURL:
+curl -X POST http://localhost:8000/api/books/ \
+  -H "Content-Type: application/json" \  # ← This is important!
+  -d '{"title": "My Book", "author": "John"}'
+```
+
+**Common Mistakes**:
+1. **Missing Content-Type**: Browser/Postman might not set it automatically
+2. **Field name typo**: `"titel"` instead of `"title"`
+3. **JSON syntax error**: Missing quotes, commas
+
+**Prevention**: Always check `request.data` in view to see what was received.
+
+---
+
+### Error 6: `django.urls.exceptions.NoReverseMatch: Reverse for 'book-list' not found`
+
+**Error Message**:
+```
+django.urls.exceptions.NoReverseMatch: Reverse for 'book-list' not found
+```
+
+**Why This Happens**:
+- URL name doesn't exist
+- URL not included in main `urls.py`
+- Typo in URL name
+
+**How to Fix**:
+```python
+# 1. Check URL name exists
+# api/urls.py
+urlpatterns = [
+    path('books/', views.BookViewSet.as_view(), name='book-list'),  # Name must match
+]
+
+# 2. Make sure it's included in main urls.py
+# core/urls.py
+urlpatterns = [
+    path('api/', include('api.urls')),  # Must include!
+]
+
+# 3. List all URL names (debug)
+python manage.py show_urls  # If installed
+# Or check manually in urls.py files
+```
+
+**Prevention**: Use consistent naming: `{model}-list`, `{model}-detail`.
+
+---
+
+### Error 7: `TypeError: Object of type Book is not JSON serializable`
+
+**Error Message**:
+```
+TypeError: Object of type Book is not JSON serializable
+```
+
+**Why This Happens**:
+- Trying to return model object directly instead of serialized data
+- Forgot to use serializer
+
+**Example of Wrong Code**:
+```python
+# WRONG - Can't return model object directly
+def list(self, request):
+    books = Book.objects.all()
+    return Response(books)  # ❌ Error!
+
+# CORRECT - Must serialize first
+def list(self, request):
+    books = Book.objects.all()
+    serializer = BookSerializer(books, many=True)
+    return Response(serializer.data)  # ✅ Works!
+```
+
+**How to Fix**:
+```python
+# Always use serializer
+serializer = BookSerializer(books, many=True)  # many=True for lists
+return Response(serializer.data)  # .data converts to JSON-serializable dict
+```
+
+**Prevention**: Always use serializers to convert model objects to JSON.
+
+---
+
+### Error 8: `django.db.utils.IntegrityError: UNIQUE constraint failed`
+
+**Error Message**:
+```
+django.db.utils.IntegrityError: UNIQUE constraint failed: api_book.isbn
+```
+
+**Why This Happens**:
+- Trying to create object with duplicate unique field value
+- Unique constraint violation (ISBN already exists)
+
+**How to Fix**:
+```python
+# Option 1: Check before creating
+if Book.objects.filter(isbn=isbn_value).exists():
+    return Response({'error': 'ISBN already exists'}, status=400)
+
+# Option 2: Handle in serializer
+class BookSerializer(serializers.ModelSerializer):
+    def validate_isbn(self, value):
+        if Book.objects.filter(isbn=value).exists():
+            raise serializers.ValidationError("ISBN already exists")
+        return value
+
+# Option 3: Use get_or_create
+book, created = Book.objects.get_or_create(
+    isbn=isbn_value,
+    defaults={'title': 'Default Title', 'author': 'Author'}
+)
+```
+
+**Prevention**: Validate unique fields before saving, or use `get_or_create()`.
+
+---
+
+### Error 9: `AttributeError: 'NoneType' object has no attribute 'username'`
+
+**Error Message**:
+```
+AttributeError: 'NoneType' object has no attribute 'username'
+```
+
+**Why This Happens**:
+- Trying to access attribute on `None` object
+- `.get()` returned `None` (object doesn't exist)
+- ForeignKey relationship is `None`
+
+**Example of Wrong Code**:
+```python
+# WRONG - Book might not exist
+book = Book.objects.get(id=999)  # If doesn't exist, raises DoesNotExist
+# Or if using filter().first():
+book = Book.objects.filter(id=999).first()  # Returns None if not found
+print(book.title)  # ❌ Error if book is None!
+```
+
+**How to Fix**:
+```python
+# Option 1: Use try/except
+try:
+    book = Book.objects.get(id=999)
+    print(book.title)
+except Book.DoesNotExist:
+    return Response({'error': 'Book not found'}, status=404)
+
+# Option 2: Check if None
+book = Book.objects.filter(id=999).first()
+if book:
+    print(book.title)
+else:
+    return Response({'error': 'Book not found'}, status=404)
+
+# Option 3: Use get_object_or_404 (in views)
+from django.shortcuts import get_object_or_404
+book = get_object_or_404(Book, id=999)  # Raises 404 if not found
+```
+
+**Prevention**: Always check if object exists before accessing attributes.
+
+---
+
+### Error 10: `django.core.exceptions.FieldError: Cannot resolve keyword 'author_name' into field`
+
+**Error Message**:
+```
+django.core.exceptions.FieldError: Cannot resolve keyword 'author_name' into field
+```
+
+**Why This Happens**:
+- Field name doesn't exist in model
+- Typo in field name
+- Using wrong lookup (e.g., `author_name` instead of `author__name`)
+
+**How to Fix**:
+```python
+# Check actual field names in model
+class Book(models.Model):
+    author = models.CharField(max_length=100)  # Field is 'author', not 'author_name'
+
+# WRONG
+Book.objects.filter(author_name='John')  # ❌ Field doesn't exist
+
+# CORRECT
+Book.objects.filter(author='John')  # ✅ Correct field name
+
+# For ForeignKey relationships, use double underscore
+class Book(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+# Access related field
+Book.objects.filter(author__username='john')  # ✅ author__username
+```
+
+**Prevention**: Check model fields before filtering. Use `model._meta.get_fields()` to list all fields.
+
+---
+
+### Error 11: `AssertionError: The `.queryset` attribute may not be a `RawQuerySet``
+
+**Error Message**:
+```
+AssertionError: The `.queryset` attribute may not be a `RawQuerySet`
+```
+
+**Why This Happens**:
+- Using `.raw()` SQL query in ViewSet queryset
+- ViewSet expects QuerySet, not RawQuerySet
+
+**How to Fix**:
+```python
+# WRONG - Can't use raw() in ViewSet
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.raw("SELECT * FROM api_book")  # ❌
+
+# CORRECT - Use normal QuerySet
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()  # ✅
+
+# If you need raw SQL, use it in get_queryset()
+class BookViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        # Process raw query results
+        raw_books = Book.objects.raw("SELECT * FROM api_book")
+        # Convert to list of objects
+        return list(raw_books)
+```
+
+**Prevention**: ViewSets expect QuerySets, not RawQuerySets. Use `.raw()` only when necessary.
+
+---
+
+### Error 12: `KeyError: 'title'` in Serializer
+
+**Error Message**:
+```
+KeyError: 'title'
+```
+
+**Why This Happens**:
+- Accessing key that doesn't exist in dictionary
+- Field not included in request data
+- Typo in field name
+
+**How to Fix**:
+```python
+# WRONG - Assumes 'title' exists
+def create(self, validated_data):
+    title = validated_data['title']  # ❌ KeyError if 'title' not present
+
+# CORRECT - Use .get() with default
+def create(self, validated_data):
+    title = validated_data.get('title', 'Untitled')  # ✅ Default value
+
+# Or check if key exists
+def create(self, validated_data):
+    if 'title' in validated_data:
+        title = validated_data['title']
+    else:
+        raise serializers.ValidationError({'title': 'This field is required'})
+```
+
+**Prevention**: Use `.get()` method with defaults, or validate required fields first.
+
+---
+
+### General Debugging Tips
+
+**1. Read the Full Error Message**
+- Django/DRF errors are usually descriptive
+- Look for the actual error (last line)
+- Check the traceback to see where it happened
+
+**2. Check Your Code Step by Step**
+```python
+# Add print statements to debug
+def create(self, request):
+    print("Request data:", request.data)  # What was sent?
+    serializer = BookSerializer(data=request.data)
+    print("Serializer valid:", serializer.is_valid())  # Is it valid?
+    if not serializer.is_valid():
+        print("Errors:", serializer.errors)  # What are the errors?
+    # ...
+```
+
+**3. Use Django Shell**
+```bash
+python manage.py shell
+
+# Test your code
+from api.models import Book
+from api.serializers import BookSerializer
+
+# Test model
+book = Book.objects.first()
+print(book.title)
+
+# Test serializer
+data = {'title': 'Test', 'author': 'John'}
+serializer = BookSerializer(data=data)
+print(serializer.is_valid())
+print(serializer.errors)
+```
+
+**4. Check Database State**
+```bash
+# View all books
+python manage.py shell
+>>> from api.models import Book
+>>> Book.objects.all()
+>>> Book.objects.count()
+```
+
+**5. Verify URLs**
+```bash
+# List all URLs
+python manage.py show_urls  # If installed
+# Or check urls.py files manually
+```
+
+**6. Check Settings**
+- Verify `INSTALLED_APPS` includes your app
+- Check `REST_FRAMEWORK` settings
+- Verify database configuration
+
+**7. Common Patterns**
+- **Import errors**: Check virtual environment activated, package installed
+- **Database errors**: Run migrations
+- **Serializer errors**: Check field names match model
+- **URL errors**: Verify URL patterns and names
+- **Permission errors**: Check authentication/permissions
+
 ## Next Steps
 
 Congratulations! You've completed Level 1. You now know:
@@ -1529,7 +2029,7 @@ Congratulations! You've completed Level 1. You now know:
 - ✅ URL routing
 - ✅ Building CRUD APIs
 
-**Ready for Level 2?** Continue to [Level 2: Intermediate](LEVEL_2_INTERMEDIATE.md) to learn about authentication, permissions, filtering, and pagination!
+**Ready for Level 2A?** Continue to [Level 2A: Intermediate - Authentication, Permissions & Throttling](LEVEL_2A_INTERMEDIATE.md) to learn about authentication, permissions, and rate limiting!
 
 ---
 

@@ -1,798 +1,28 @@
-# Level 2: Intermediate - Authentication, Permissions & Querysets
+# Level 2B: Intermediate - Filtering, Searching & Advanced Features
 
 ## Goal
 
-Build secure APIs with robust authentication, permissions, filtering, searching, ordering, and pagination. By the end of this level, you'll be able to create production-ready, secure REST APIs.
+Build APIs with powerful filtering, searching, ordering, pagination, and robust error handling. By the end of this level, you'll be able to create production-ready APIs with advanced query capabilities and professional error handling.
 
 ## Note on Examples
 
-This guide uses **Task API** as the primary example throughout explanation sections for consistency with Level 1. Complete step-by-step implementations are provided for both **Task API** (user-owned, private data) and **Book API** (can be public or user-owned) to show different use cases:
+This guide builds on **Level 2A** where you learned authentication and permissions. We'll use **Task API** and **Book API** as examples throughout, adding filtering, searching, ordering, and pagination to the secure APIs you built in Level 2A.
 
-- **Task API examples**: Used in explanations (permissions, filtering, searching, etc.) - represents private, user-owned data
-- **Book API examples**: Used in complete step-by-step section - represents content that can be public or user-owned
-- **Both examples**: Help you understand different scenarios and patterns
+**Prerequisites**: Complete [Level 2A](LEVEL_2A_INTERMEDIATE.md) first to understand authentication and permissions.
 
 You can apply all concepts to any model (Task, Book, Product, Post, etc.).
 
-## Class-Based Views (CBV) Approach
-
-**This guide follows the Class-Based Views (CBV) approach** throughout, which is the recommended and modern way to build DRF APIs:
-
-- ✅ **ViewSets** (`ModelViewSet`, `ReadOnlyViewSet`) - For CRUD operations
-- ✅ **Generic Views** (`CreateAPIView`, `ListAPIView`, etc.) - For specific operations
-- ✅ **APIView** - For custom logic when needed
-- ❌ **Function-based views** (`@api_view`) - Only used when absolutely necessary
-
-**Why Class-Based Views?**
-- **Reusable**: Easy to extend and customize
-- **DRY**: Less code duplication
-- **Built-in features**: Authentication, permissions, filtering work automatically
-- **Industry standard**: Most DRF projects use CBV
-- **Better organization**: Clear separation of concerns
-
-All examples in this guide use class-based views unless explicitly noted otherwise.
-
 ## Table of Contents
 
-1. [Class-Based Views (CBV) Approach](#class-based-views-cbv-approach)
-2. [Django Authentication System](#django-authentication-system)
-3. [DRF Authentication Classes](#drf-authentication-classes)
-4. [JWT Authentication Setup](#jwt-authentication-setup)
-5. [Permissions](#permissions)
-6. [Filtering](#filtering)
-7. [Searching](#searching)
-8. [Ordering](#ordering)
-9. [Pagination](#pagination)
-10. [Step-by-Step: Secure Book API](#step-by-step-secure-book-api)
-11. [Step-by-Step: Secure Task API](#step-by-step-secure-task-api)
-12. [UserProfile API](#userprofile-api)
-13. [Throttling](#throttling)
-14. [Exception Handling](#exception-handling)
-15. [Testing Authenticated APIs](#testing-authenticated-apis)
-16. [Exercises](#exercises)
-17. [Common Errors and Solutions](#common-errors-and-solutions)
-18. [Add-ons](#add-ons)
-
-## Django Authentication System
-
-### Why Authentication?
-
-**The Problem**: Without authentication, anyone can access your API and modify data. This is a security risk!
-
-**Real-world analogy**: 
-- **No authentication** = House with no locks (anyone can enter)
-- **With authentication** = House with keys (only authorized people enter)
-
-**Why it matters**:
-- **Security**: Protect user data
-- **Personalization**: Show users only their data
-- **Accountability**: Track who did what
-- **Access control**: Limit what users can do
-
-### Understanding Django Users
-
-Django comes with a built-in User model that handles user accounts:
-
-**What is a User model?**
-- Represents a person using your application
-- Stores login credentials (username, password)
-- Tracks user information (email, name)
-- Manages permissions and access levels
-
-**Why use Django's User model?**
-- **Ready-made**: No need to build from scratch
-- **Secure**: Password hashing built-in
-- **Tested**: Used by millions of applications
-- **Flexible**: Can be extended for custom needs
-
-```python
-from django.contrib.auth.models import User
-
-# User fields
-user.username      # Username
-user.email         # Email address
-user.password      # Hashed password (never access directly)
-user.first_name    # First name
-user.last_name     # Last name
-user.is_staff      # Admin access (can access Django admin)
-user.is_active     # Account status (False = disabled account)
-user.is_superuser  # Superuser (all permissions)
-user.date_joined   # When user account was created
-```
-
-**Explanation of key fields**:
-- **`username`**: Unique identifier for login
-- **`email`**: User's email address
-- **`password`**: Stored as hash (never plain text)
-- **`is_staff`**: Can access Django admin panel
-- **`is_active`**: If False, user cannot login
-- **`is_superuser`**: Has all permissions automatically
-
-### Creating Users
-
-**Why multiple methods?**
-- Different methods serve different purposes
-- Some hash passwords (secure), others don't (insecure)
-- Always use methods that hash passwords!
-
-```python
-# In Django shell: python manage.py shell
-
-from django.contrib.auth.models import User
-
-# Method 1: create_user (recommended - hashes password)
-user = User.objects.create_user(
-    username='john',
-    email='john@example.com',
-    password='securepassword123'
-)
-```
-
-**Why `create_user`?**
-- **Password hashing**: Converts password to secure hash (can't be reversed)
-- **Validation**: Checks username/email format
-- **Default values**: Sets sensible defaults (is_active=True)
-- **Security**: Never store plain text passwords!
-
-**What is password hashing?**
-- Plain password: `"mypassword123"` ❌ (stored as-is, anyone can read)
-- Hashed password: `"pbkdf2_sha256$..."` ✅ (one-way encryption, can't be reversed)
-- When user logs in, Django hashes their input and compares with stored hash
-
-```python
-# Method 2: create_superuser
-admin = User.objects.create_superuser(
-    username='admin',
-    email='admin@example.com',
-    password='admin123'
-)
-```
-
-**Why `create_superuser`?**
-- Creates user with admin privileges (`is_staff=True`, `is_superuser=True`)
-- Can access Django admin panel
-- Has all permissions by default
-- Use for site administrators
-
-```python
-# Method 3: Using User.objects.create (not recommended - password not hashed)
-```
-
-**Why NOT use `User.objects.create`?**
-- **Security risk**: Password stored in plain text!
-- No validation
-- No password hashing
-- **Never use this for passwords!**
-
-### Custom User Model
-
-**Why create a custom user model?**
-
-**The Problem**: Django's default User model has limited fields (username, email, password). What if you need:
-- Phone numbers
-- Profile pictures
-- Bio/description
-- Custom fields
-
-**The Solution**: Extend Django's User model with your own fields.
-
-**When to use custom user model?**
-- **Production apps**: Almost always
-- **Need extra fields**: Phone, avatar, bio, etc.
-- **Different login**: Email instead of username
-- **Before first migration**: Must set before creating database
-
-**Why before first migration?**
-- Changing user model after migration is very difficult
-- Requires database restructuring
-- Can cause data loss
-- **Always decide early!**
-
-```python
-# api/models.py
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-
-class CustomUser(AbstractUser):
-    phone_number = models.CharField(max_length=15, blank=True)
-    bio = models.TextField(blank=True)
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.username
-```
-
-**Explanation**:
-- **`AbstractUser`**: Base class with all default User fields (username, email, password, etc.)
-- **Extend it**: Add your custom fields
-- **Inherits everything**: All User functionality still works
-- **Add custom fields**: Phone, bio, avatar, etc.
-
-**Update settings.py:**
-
-```python
-# core/settings.py
-AUTH_USER_MODEL = 'api.CustomUser'
-```
-
-**What this does**:
-- Tells Django to use your custom user model
-- Replaces default User model everywhere
-- Must be set before first migration!
-
-**Important**: Set this before your first migration! Once migrations are created, changing is very difficult.
-
-## DRF Authentication Classes
-
-### Authentication vs Authorization
-
-**These are two different but related concepts:**
-
-- **Authentication**: Who are you? (Identity)
-  - Verifies user's identity
-  - "Are you really John?"
-  - Examples: Login, password check, token verification
-  
-- **Authorization**: What can you do? (Permissions)
-  - Determines what user can access
-  - "Can John edit this book?"
-  - Examples: Admin only, owner only, read-only
-
-**Real-world analogy**:
-- **Authentication** = Showing ID at entrance (proving who you are)
-- **Authorization** = Security guard checking if you have access to VIP area (what you can do)
-
-**Why both?**
-- Authentication without authorization = Everyone can do everything
-- Authorization without authentication = Can't identify users
-- **Need both** for secure APIs!
-
-**The Flow**:
-```
-1. User sends credentials → Authentication (who are you?)
-2. If authenticated → Check permissions → Authorization (what can you do?)
-3. If authorized → Allow access
-4. If not authorized → Deny access (403 Forbidden)
-```
-
-### DRF Authentication Types
-
-#### 1. Session Authentication
-
-**What is Session Authentication?**
-
-Uses Django's session framework. Stores authentication state on the server.
-
-**How it works**:
-1. User logs in with username/password
-2. Server creates a session (stored in database/cache)
-3. Server sends session ID in cookie to browser
-4. Browser sends cookie with each request
-5. Server checks session to identify user
-
-**Why use it?**
-- **Simple**: Built into Django
-- **Secure**: Session stored server-side
-- **Good for**: Web apps (same domain)
-- **Automatic**: Browser handles cookies
-
-**Limitations**:
-- **Same-origin only**: Doesn't work well with mobile apps
-- **Cookie-based**: Requires browser cookie support
-- **Server storage**: Needs database/cache for sessions
-
-**When to use**:
-- Web applications (React, Vue on same domain)
-- Traditional web apps
-- When you control both frontend and backend
-
-```python
-# core/settings.py
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-}
-```
-
-**Why this configuration?**
-- Sets default authentication for all views
-- Can override per-view if needed
-- Multiple authentication classes can be used (tries each until one works)
-
-#### 2. Token Authentication
-
-Simple token-based authentication. Good for client-server setups.
-
-```bash
-# Install
-pip install djangorestframework-simplejwt
-```
-
-```python
-# core/settings.py
-INSTALLED_APPS = [
-    # ...
-    'rest_framework',
-    'rest_framework_simplejwt',  # Add this
-]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-}
-```
-
-#### 3. JWT Authentication (Recommended)
-
-**What is JWT?**
-
-**JWT** = JSON Web Token
-
-**How it works**:
-1. User logs in with username/password
-2. Server creates a JWT token (contains user info)
-3. Server sends token to client
-4. Client stores token (localStorage, memory)
-5. Client sends token with each request in header
-6. Server verifies token and extracts user info
-
-**Why JWT is popular**:
-- **Stateless**: No server-side storage needed
-- **Scalable**: Works across multiple servers
-- **Mobile-friendly**: Works with mobile apps
-- **Industry standard**: Used by major companies
-- **Self-contained**: Token has all user info
-
-**JWT Structure**:
-```
-Header.Payload.Signature
-
-Example:
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.signature
-```
-
-**Parts**:
-- **Header**: Algorithm and token type
-- **Payload**: User data (ID, username, etc.)
-- **Signature**: Ensures token wasn't tampered with
-
-**Why stateless matters**:
-- **Session auth**: Server stores session → needs database lookup
-- **JWT auth**: Token contains info → no database lookup needed
-- **Result**: Faster, more scalable
-
-**Security considerations**:
-- Tokens expire (access token: 1 hour, refresh token: 1 day)
-- Tokens can be blacklisted if compromised
-- Always use HTTPS in production (tokens in headers)
-
-**When to use JWT**:
-- ✅ Mobile apps (iOS, Android)
-- ✅ Single Page Applications (SPA)
-- ✅ Microservices
-- ✅ APIs used by multiple clients
-- ❌ Not ideal for traditional server-rendered apps
-
-## JWT Authentication Setup
-
-### Step 1: Install Package
-
-```bash
-pip install djangorestframework-simplejwt
-pip freeze > requirements.txt
-```
-
-### Step 2: Add to INSTALLED_APPS
-
-```python
-# core/settings.py
-INSTALLED_APPS = [
-    # ...
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'api',
-]
-```
-
-### Step 3: Configure JWT Settings
-
-```python
-# core/settings.py
-from datetime import timedelta
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-}
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'UPDATE_LAST_LOGIN': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-}
-```
-
-**Explanation of JWT Settings**:
-
-- **`ACCESS_TOKEN_LIFETIME`**: How long access token is valid (60 minutes)
-  - **Why short?**: If stolen, expires quickly
-  - **Trade-off**: Security vs convenience
-  
-- **`REFRESH_TOKEN_LIFETIME`**: How long refresh token is valid (1 day)
-  - **Why longer?**: Used to get new access tokens
-  - **More secure**: Stored more securely, used less often
-  
-- **`ROTATE_REFRESH_TOKENS`**: Issue new refresh token when used
-  - **Why?**: If old token stolen, it becomes invalid
-  - **Security**: Limits damage from token theft
-  
-- **`BLACKLIST_AFTER_ROTATION`**: Add old refresh token to blacklist
-  - **Why?**: Prevents reuse of old tokens
-  - **Security**: One-time use tokens
-  
-- **`UPDATE_LAST_LOGIN`**: Update user's last login time
-  - **Why?**: Track user activity, security monitoring
-  
-- **`ALGORITHM`**: How token is signed ('HS256' = HMAC SHA-256)
-  - **Why HS256?**: Fast, secure, widely supported
-  - **Alternative**: RS256 (asymmetric, more secure but slower)
-  
-- **`SIGNING_KEY`**: Secret key to sign tokens (use Django SECRET_KEY)
-  - **Why secret?**: Anyone with key can create valid tokens
-  - **Security**: Never expose this key!
-  
-- **`AUTH_HEADER_TYPES`**: Token type in header ('Bearer')
-  - **Why Bearer?**: Standard OAuth2 format
-  - **Usage**: `Authorization: Bearer <token>`
-  
-- **`USER_ID_FIELD`**: Which User model field to use ('id')
-- **`USER_ID_CLAIM`**: Where to store user ID in token ('user_id')
-```
-
-### Step 4: Add JWT URLs
-
-```python
-# core/urls.py
-from django.contrib import admin
-from django.urls import path, include
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
-    # JWT endpoints
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-]
-```
-
-### Step 5: Create User Registration View
-
-```python
-# api/serializers.py
-from rest_framework import serializers
-from django.contrib.auth.models import User
-
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, min_length=8)
-    password_confirm = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password', 'password_confirm', 'first_name', 'last_name']
-
-    def validate(self, data):
-        if data['password'] != data['password_confirm']:
-            raise serializers.ValidationError("Passwords don't match")
-        return data
-
-    def create(self, validated_data):
-        validated_data.pop('password_confirm')
-        user = User.objects.create_user(**validated_data)
-        return user
-```
-
-```python
-# api/views.py
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
-from .serializers import UserRegistrationSerializer
-
-class UserRegistrationView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserRegistrationSerializer
-    permission_classes = []  # Allow anyone to register
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        
-        # Generate tokens
-        refresh = RefreshToken.for_user(user)
-        
-        return Response({
-            'user': serializer.data,
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }, status=status.HTTP_201_CREATED)
-```
-
-```python
-# api/urls.py
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    # ... other URLs ...
-    path('register/', views.UserRegistrationView.as_view(), name='register'),
-]
-```
-
-### Step 6: Test JWT Authentication
-
-```bash
-# Register user
-curl -X POST http://localhost:8000/api/register/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "testuser",
-    "email": "test@example.com",
-    "password": "testpass123",
-    "password_confirm": "testpass123"
-  }'
-
-# Get token
-curl -X POST http://localhost:8000/api/token/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "testuser", "password": "testpass123"}'
-
-# Use token
-TOKEN="your_access_token_here"
-curl -H "Authorization: Bearer $TOKEN" \
-  http://localhost:8000/api/tasks/
-```
-
-## Permissions
-
-### What are Permissions?
-
-**Permissions** determine what authenticated users can do.
-
-**Why Permissions?**
-- **Security**: Not all users should do everything
-- **Data protection**: Users should only see/edit their own data
-- **Role-based access**: Admins can do more than regular users
-- **Compliance**: Meet security requirements
-
-**Real-world analogy**:
-- **No permissions** = Everyone has master key (bad!)
-- **With permissions** = Different keys for different access levels (good!)
-
-**Permission Levels**:
-1. **Public**: Anyone can access (AllowAny)
-2. **Authenticated**: Must be logged in (IsAuthenticated)
-3. **Owner**: Can only access own data (IsOwnerOrReadOnly)
-4. **Admin**: Only staff can access (IsAdminUser)
-
-### Built-in Permission Classes
-
-#### 1. AllowAny
-
-**What it does**: Anyone can access, no authentication required.
-
-**Why use it?**
-- Public data (blog posts, product listings)
-- Registration/login endpoints
-- Public APIs
-- When you want maximum accessibility
-
-**Security note**: Use carefully! Only for truly public data.
-
-**When to use**:
-- ✅ Public blog posts
-- ✅ Product catalogs
-- ✅ Public user profiles
-- ❌ User data
-- ❌ Admin functions
-
-```python
-from rest_framework.permissions import AllowAny
-
-class TaskViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
-    # ...
-```
-
-**Note**: In this example, we use `TaskViewSet`, but the same pattern applies to any ViewSet (Book, Product, etc.).
-
-#### 2. IsAuthenticated
-
-**What it does**: User must be logged in (authenticated) to access.
-
-**Why use it?**
-- **Protect data**: Only logged-in users can access
-- **User-specific content**: Show personalized data
-- **Account required**: Force users to create accounts
-- **Security**: Basic protection for most endpoints
-
-**When to use**:
-- ✅ User's own tasks/books
-- ✅ User profiles
-- ✅ Private data
-- ✅ Any endpoint requiring user identity
-
-**What happens if not authenticated?**
-- Returns `401 Unauthorized`
-- Client must login first
-- Token/session required
-
-```python
-from rest_framework.permissions import IsAuthenticated
-
-class TaskViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    # ...
-```
-
-**Why this configuration?**
-- Applies to all actions (list, create, retrieve, update, delete)
-- Can override per-action if needed
-- Most common permission for user data
-
-**Note**: This is the most common permission for user-owned resources like tasks, where users should only see their own data.
-
-#### 3. IsAdminUser
-
-User must be staff/admin.
-
-```python
-from rest_framework.permissions import IsAdminUser
-
-class TaskViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAdminUser]
-    # ...
-```
-
-**Note**: Use this for admin-only endpoints. For user data like tasks, you typically want `IsAuthenticated` instead.
-
-#### 4. IsAuthenticatedOrReadOnly
-
-**What it does**: 
-- **Authenticated users**: Can do everything (read, create, update, delete)
-- **Unauthenticated users**: Can only read (GET requests)
-
-**Why use it?**
-- **Public viewing**: Anyone can see data
-- **Protected editing**: Only logged-in users can modify
-- **Common pattern**: Blog posts, comments, products
-- **User engagement**: Encourage registration to participate
-
-**Real-world example**:
-- Blog: Anyone can read posts, only logged-in users can comment
-- Products: Anyone can browse, only logged-in users can add to cart
-- Comments: Anyone can read, only logged-in users can post
-
-**When to use**:
-- ✅ Public content with user contributions
-- ✅ Read-mostly APIs
-- ✅ When you want public access but protected writes
-- ❌ Private/sensitive data
-
-```python
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
-class TaskViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    # ...
-```
-
-**What this means**:
-- `GET /api/tasks/` → Anyone can access ✅
-- `POST /api/tasks/` → Must be authenticated ✅
-- `PUT /api/tasks/1/` → Must be authenticated ✅
-- `DELETE /api/tasks/1/` → Must be authenticated ✅
-
-**Note**: For private user data like personal tasks, you'd typically use `IsAuthenticated` instead. This permission is better for public content.
-
-### Custom Permissions
-
-#### IsOwnerOrReadOnly
-
-Only the owner can edit/delete, others can read.
-
-```python
-# api/permissions.py
-from rest_framework import permissions
-
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    """
-    Custom permission to only allow owners to edit/delete objects.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        # Read permissions for any request
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        # Write permissions only to the owner
-        return obj.owner == request.user
-```
-
-**Use in views:**
-
-```python
-# api/views.py
-from .permissions import IsOwnerOrReadOnly
-
-class TaskViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-    
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-```
-
-**Why this works for tasks:**
-- Users can read all tasks (or filter to their own in `get_queryset()`)
-- Users can only edit/delete their own tasks
-- Perfect for user-owned resources like tasks, notes, etc.
-
-### Permission at View Level
-
-**Why different permissions per action?**
-- **List/Retrieve**: Maybe public (AllowAny) or authenticated (IsAuthenticated)
-- **Create**: Usually requires authentication
-- **Update/Delete**: Usually requires ownership (IsOwnerOrReadOnly)
-
-```python
-# Different permissions for different actions
-class TaskViewSet(viewsets.ModelViewSet):
-    def get_permissions(self):
-        if self.action == 'create':
-            permission_classes = [IsAuthenticated]  # Must be logged in to create
-        elif self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]  # Must own to edit
-        else:
-            permission_classes = [IsAuthenticated]  # Must be logged in to view
-        return [permission() for permission in permission_classes]
-```
-
-**Explanation**:
-- **`create`**: Anyone authenticated can create tasks
-- **`update/delete`**: Only task owner can modify
-- **`list/retrieve`**: Authenticated users can view (you might filter to own tasks in `get_queryset()`)
-
-**Alternative for private tasks** (users only see their own):
-```python
-class TaskViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]  # Same for all actions
-    
-    def get_queryset(self):
-        # Users only see their own tasks
-        return Task.objects.filter(owner=self.request.user)
-```
+1. [Filtering](#filtering)
+2. [Searching](#searching)
+3. [Ordering](#ordering)
+4. [Pagination](#pagination)
+5. [Exception Handling](#exception-handling)
+6. [Testing Authenticated APIs](#testing-authenticated-apis)
+7. [Exercises](#exercises)
+8. [Common Errors and Solutions](#common-errors-and-solutions)
+9. [Add-ons](#add-ons)
 
 ## Filtering
 
@@ -838,16 +68,23 @@ pip install django-filter
 
 ```python
 # core/settings.py
+# Add django_filters to installed apps
 INSTALLED_APPS = [
-    # ...
-    'django_filters',
-    'rest_framework',
+    # ... other apps ...
+    'django_filters',  # Package for advanced filtering
+    'rest_framework',  # Django REST Framework
 ]
 
+# DRF configuration - applies to all views unless overridden
 REST_FRAMEWORK = {
+    # Filter backends: Systems that handle filtering, searching, ordering
+    # These are checked in order - first one that can handle the request is used
     'DEFAULT_FILTER_BACKENDS': [
+        # DjangoFilterBackend: Handles filtering with django-filter (exact matches, ranges, etc.)
         'django_filters.rest_framework.DjangoFilterBackend',
+        # SearchFilter: Handles searching across multiple fields (built into DRF)
         'rest_framework.filters.SearchFilter',
+        # OrderingFilter: Handles sorting results (built into DRF)
         'rest_framework.filters.OrderingFilter',
     ],
 }
@@ -868,13 +105,28 @@ REST_FRAMEWORK = {
 
 ```python
 # api/views.py
+# Import DjangoFilterBackend for filtering functionality
 from django_filters.rest_framework import DjangoFilterBackend
+# Import viewsets and filters
 from rest_framework import viewsets, filters
+# Import models and serializers
+from .models import Task
+from .serializers import TaskSerializer
 
+# ViewSet provides all CRUD operations automatically
 class TaskViewSet(viewsets.ModelViewSet):
+    # Base queryset - all tasks in database
     queryset = Task.objects.all()
+    # Serializer for data conversion
     serializer_class = TaskSerializer
-    filter_backends = [DjangoFilterBackend]  # Enable filtering
+    
+    # Enable filtering by adding filter backends
+    # filter_backends is a list - can have multiple backends (filtering + searching + ordering)
+    filter_backends = [DjangoFilterBackend]  # Enable filtering with django-filter
+    
+    # Simple filtering: List fields that can be filtered
+    # filterset_fields allows exact match filtering on these fields
+    # Example: ?completed=false will filter tasks where completed equals False
     filterset_fields = ['completed', 'created_at']  # Which fields can be filtered
 ```
 
@@ -917,22 +169,40 @@ curl -H "Authorization: Bearer $TOKEN" \
 
 ```python
 # api/filters.py
+# Import django_filters for advanced filtering
 import django_filters
+# Import the model to filter
 from .models import Task
 
+# FilterSet class defines how filtering works
+# More powerful than filterset_fields - allows custom field names and advanced lookups
 class TaskFilter(django_filters.FilterSet):
-    # Filter by title containing text (case-insensitive)
+    # Custom filter: Filter by title containing text (case-insensitive)
+    # lookup_expr='icontains' means "contains" (case-insensitive)
+    # Example: ?title=django finds tasks with "django" in title
     title = django_filters.CharFilter(lookup_expr='icontains')
     
-    # Filter by date range
+    # Custom filter: Filter by date range (created after a date)
+    # field_name='created_at' = which model field to filter
+    # lookup_expr='gte' = greater than or equal (created on or after this date)
+    # Example: ?created_after=2024-01-01 finds tasks created on or after Jan 1, 2024
     created_after = django_filters.DateFilter(field_name='created_at', lookup_expr='gte')
+    
+    # Custom filter: Filter by date range (created before a date)
+    # lookup_expr='lte' = less than or equal (created on or before this date)
+    # Example: ?created_before=2024-12-31 finds tasks created before Dec 31, 2024
     created_before = django_filters.DateFilter(field_name='created_at', lookup_expr='lte')
     
-    # Filter by completed status
+    # Filter by completed status (exact match)
+    # BooleanFilter handles True/False values
+    # Example: ?completed=false finds incomplete tasks
     completed = django_filters.BooleanFilter()
 
     class Meta:
+        # Model to filter
         model = Task
+        # Fields that can be used in URL query parameters
+        # Must match the filter field names defined above
         fields = ['completed', 'title', 'created_after', 'created_before']
 ```
 
@@ -944,11 +214,22 @@ class TaskFilter(django_filters.FilterSet):
 
 ```python
 # api/views.py
+# Import the FilterSet class we created
 from .filters import TaskFilter
+# Import other necessary classes
+from rest_framework import viewsets
+from .models import Task
+from .serializers import TaskSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
+    # Base queryset
     queryset = Task.objects.all()
+    # Serializer for data conversion
     serializer_class = TaskSerializer
+    
+    # Use FilterSet class instead of simple filterset_fields
+    # filterset_class provides advanced filtering (custom field names, date ranges, etc.)
+    # When client sends ?title=django&created_after=2024-01-01, TaskFilter handles it
     filterset_class = TaskFilter  # Use FilterSet instead of filterset_fields
 ```
 
@@ -997,12 +278,26 @@ curl -H "Authorization: Bearer $TOKEN" \
 
 ```python
 # api/views.py
+# Import viewsets and filters
 from rest_framework import viewsets, filters
+# Import models and serializers
+from .models import Task
+from .serializers import TaskSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
+    # Base queryset
     queryset = Task.objects.all()
+    # Serializer for data conversion
     serializer_class = TaskSerializer
+    
+    # Enable searching by adding SearchFilter to filter_backends
+    # SearchFilter is built into DRF (no extra package needed)
     filter_backends = [filters.SearchFilter]  # Enable searching
+    
+    # List of fields to search in
+    # When user sends ?search=django, DRF searches for "django" in these fields
+    # Uses case-insensitive partial matching by default
+    # Returns tasks where ANY field contains the search term (OR logic)
     search_fields = ['title', 'desc']  # Fields to search in
 ```
 
@@ -1076,13 +371,30 @@ class TaskViewSet(viewsets.ModelViewSet):
 
 ```python
 # api/views.py
+# Import viewsets and filters
 from rest_framework import viewsets, filters
+# Import models and serializers
+from .models import Task
+from .serializers import TaskSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
+    # Base queryset
     queryset = Task.objects.all()
+    # Serializer for data conversion
     serializer_class = TaskSerializer
+    
+    # Enable ordering by adding OrderingFilter to filter_backends
+    # OrderingFilter is built into DRF (no extra package needed)
     filter_backends = [filters.OrderingFilter]  # Enable ordering
+    
+    # List of fields users can sort by
+    # Security: Prevents sorting by sensitive fields (like password hash)
+    # Users can only sort by fields in this list
     ordering_fields = ['title', 'completed', 'created_at', 'updated_at']  # Allowed fields
+    
+    # Default ordering if user doesn't specify ?ordering= parameter
+    # '-' prefix means descending (newest/highest first)
+    # Without '-' means ascending (oldest/lowest first)
     ordering = ['-created_at']  # Default ordering (newest first)
 ```
 
@@ -1166,8 +478,15 @@ curl -H "Authorization: Bearer $TOKEN" \
 
 ```python
 # core/settings.py
+# DRF configuration - applies to all list endpoints globally
 REST_FRAMEWORK = {
+    # Pagination class to use for all list views
+    # PageNumberPagination = User-friendly pagination with page numbers (?page=2)
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    
+    # How many records to show per page
+    # Can be overridden per-view if needed
+    # Example: If you have 100 tasks, this shows 10 per page (10 pages total)
     'PAGE_SIZE': 10,  # Records per page
 }
 ```
@@ -1221,12 +540,27 @@ curl -H "Authorization: Bearer $TOKEN" \
 
 ```python
 # api/pagination.py
+# Import LimitOffsetPagination class
 from rest_framework.pagination import LimitOffsetPagination
 
+# Custom pagination class using limit/offset approach
+# LimitOffsetPagination = Flexible pagination (?limit=20&offset=40)
+# Good for APIs where clients control exactly how many records to fetch
 class BookLimitOffsetPagination(LimitOffsetPagination):
+    # Default number of records if limit is not specified
+    # Example: ?offset=40 (no limit) returns default_limit records starting from offset 40
     default_limit = 10
+    
+    # URL parameter name for limit (how many records to return)
+    # Example: ?limit=20 returns 20 records
     limit_query_param = 'limit'
+    
+    # URL parameter name for offset (how many records to skip)
+    # Example: ?offset=40 skips first 40 records, returns next default_limit records
     offset_query_param = 'offset'
+    
+    # Maximum limit allowed (prevents users from requesting too many records at once)
+    # Example: If user sends ?limit=10000, it's capped at max_limit=100
     max_limit = 100
 ```
 
@@ -1251,11 +585,23 @@ Best for large datasets. Provides stable, consistent pagination.
 
 ```python
 # api/pagination.py
+# Import CursorPagination class
 from rest_framework.pagination import CursorPagination
 
+# Custom pagination class using cursor-based approach
+# CursorPagination = Best for large datasets, provides stable pagination
+# Uses a cursor (pointer) instead of page numbers - more stable when data changes
 class BookCursorPagination(CursorPagination):
+    # Number of records per page
     page_size = 10
+    
+    # Field to use for ordering (required for cursor pagination)
+    # Cursor pagination needs a consistent ordering to work
+    # '-' prefix = descending (newest first)
     ordering = '-created_at'
+    
+    # URL parameter name for cursor
+    # Example: ?cursor=cD0yMDI0LTAxLTAx returns next page after that cursor
     cursor_query_param = 'cursor'
 ```
 
@@ -1360,10 +706,19 @@ class BookViewSet(viewsets.ModelViewSet):
 
 ```bash
 # Get token
+# Note: By default, JWT uses 'username' for authentication.
+# If you've configured JWT to use email, replace 'username' with 'email' below.
+
 TOKEN=$(curl -s -X POST http://localhost:8000/api/token/ \
   -H "Content-Type: application/json" \
   -d '{"username": "testuser", "password": "testpass123"}' \
   | python -c "import sys, json; print(json.load(sys.stdin)['access'])")
+
+# Alternative: If using email-based authentication (requires custom JWT serializer)
+# TOKEN=$(curl -s -X POST http://localhost:8000/api/token/ \
+#   -H "Content-Type: application/json" \
+#   -d '{"email": "test@example.com", "password": "testpass123"}' \
+#   | python -c "import sys, json; print(json.load(sys.stdin)['access'])")
 
 # Create book (authenticated)
 curl -X POST http://localhost:8000/api/books/ \
@@ -1426,6 +781,9 @@ python manage.py migrate
 
 ```python
 # api/serializers.py
+from rest_framework import serializers
+from .models import Task
+
 class TaskSerializer(serializers.ModelSerializer):
     owner_username = serializers.CharField(source='owner.username', read_only=True)
 
@@ -1533,6 +891,9 @@ class UserProfile(models.Model):
 
 ```python
 # api/serializers.py
+from rest_framework import serializers
+from .models import UserProfile
+
 class UserProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
@@ -1566,7 +927,50 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 ## Throttling
 
-### Configure Throttling
+### What is Throttling?
+
+**Throttling** is similar to permissions, in that it determines if a request should be authorized. However, throttles indicate a **temporary state**, and are used to control the **rate of requests** that clients can make to an API.
+
+**Why Throttling?**
+- **Rate limiting**: Prevent API abuse and overuse
+- **Resource protection**: Protect server resources from being overwhelmed
+- **Fair usage**: Ensure fair distribution of API access
+- **Cost control**: Limit expensive operations
+- **Business tiers**: Implement different rate limits for different user tiers
+
+**Real-world analogy**:
+- **No throttling** = Unlimited free samples (everyone takes everything)
+- **With throttling** = Limited samples per person (fair distribution)
+
+**Important Security Note**: 
+The application-level throttling that REST framework provides should **not** be considered a security measure or protection against brute forcing or denial-of-service attacks. Deliberately malicious actors will always be able to spoof IP origins. The built-in throttling implementations use Django's cache framework and non-atomic operations, which may sometimes result in some fuzziness.
+
+**The application-level throttling provided by REST framework is intended for:**
+- Implementing policies such as different business tiers
+- Basic protections against service over-use
+- Fair usage policies
+
+### How Throttling is Determined
+
+As with permissions and authentication, throttling in REST framework is always defined as a **list of classes**.
+
+**The Process**:
+1. Before running the main body of the view, each throttle in the list is checked
+2. If any throttle check fails, an `exceptions.Throttled` exception will be raised
+3. The main body of the view will not run
+4. A `429 Too Many Requests` response is returned
+
+**Why multiple throttles?**
+- Different limits for authenticated vs unauthenticated users
+- Different constraints on different parts of the API
+- Both burst throttling rates and sustained throttling rates
+- Example: Limit user to 60 requests per minute AND 1000 requests per day
+
+### Setting the Throttling Policy
+
+#### Global Throttling Policy
+
+Set default throttling policy globally using `DEFAULT_THROTTLE_CLASSES` and `DEFAULT_THROTTLE_RATES`:
 
 ```python
 # core/settings.py
@@ -1582,23 +986,401 @@ REST_FRAMEWORK = {
 }
 ```
 
-### Custom Throttling
+**Rate Format**:
+- The rates can be specified over a period of second, minute, hour or day
+- The period must be specified after the `/` separator using `s`, `m`, `h` or `d`
+- Examples: `'100/second'`, `'60/minute'`, `'1000/hour'`, `'10000/day'`
+- Extended units are also allowed: `'second'`, `'minute'`, `'hour'`, `'day'`
+- Abbreviations work too: `'sec'`, `'min'`, `'hr'` (only first character matters)
+
+#### Per-View Throttling
+
+Set throttling policy on a per-view basis using `APIView`:
+
+```python
+# api/views.py
+from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle
+from rest_framework.views import APIView
+
+class ExampleView(APIView):
+    throttle_classes = [UserRateThrottle]
+
+    def get(self, request, format=None):
+        content = {
+            'status': 'request was permitted'
+        }
+        return Response(content)
+```
+
+#### Per-ViewSet Throttling
+
+Set throttling policy on a per-viewset basis:
+
+```python
+# api/views.py
+from rest_framework import viewsets
+from rest_framework.throttling import UserRateThrottle
+from .models import Book
+from .serializers import BookSerializer
+
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    throttle_classes = [UserRateThrottle]
+    # ...
+```
+
+#### Per-Action Throttling
+
+Set throttle classes for specific actions using the `@action` decorator:
+
+```python
+# api/views.py
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.throttling import UserRateThrottle
+from rest_framework.response import Response
+
+class BookViewSet(viewsets.ModelViewSet):
+    # ViewSet-level throttling (applies to all actions)
+    throttle_classes = [UserRateThrottle]
+    
+    @action(detail=True, methods=["post"], throttle_classes=[UserRateThrottle])
+    def upload_cover(self, request, pk=None):
+        # This action has its own throttle class
+        # Overrides viewset-level throttle_classes
+        content = {
+            'status': 'upload was permitted'
+        }
+        return Response(content)
+```
+
+**Note**: Throttle classes set in `@action` decorator will override any viewset-level class settings.
+
+### How Clients are Identified
+
+**IP Address Identification**:
+- The `X-Forwarded-For` HTTP header and `REMOTE_ADDR` WSGI variable are used to uniquely identify client IP addresses
+- If the `X-Forwarded-For` header is present, it will be used
+- Otherwise, the value of the `REMOTE_ADDR` variable from the WSGI environment will be used
+
+**NUM_PROXIES Setting**:
+If you need to strictly identify unique client IP addresses, configure the number of application proxies:
+
+```python
+# core/settings.py
+REST_FRAMEWORK = {
+    'NUM_PROXIES': 1,  # Number of proxies in front of your application
+}
+```
+
+**How it works**:
+- If `NUM_PROXIES` is set to non-zero, the client IP will be identified as the last IP address in the `X-Forwarded-For` header, after excluding application proxy IP addresses
+- If set to zero, the `REMOTE_ADDR` value will always be used
+
+**Important**: If you configure `NUM_PROXIES`, all clients behind a unique NAT'd gateway will be treated as a single client.
+
+### Setting up the Cache
+
+**Cache Backend Requirements**:
+- The throttle classes provided by REST framework use Django's cache backend
+- You should make sure you've set appropriate cache settings
+- The default value of `LocMemCache` backend should be okay for simple setups
+
+**Custom Cache Backend**:
+If you need to use a cache other than `'default'`, create a custom throttle class:
+
+```python
+# api/throttles.py
+from django.core.cache import caches
+from rest_framework.throttling import AnonRateThrottle
+
+class CustomAnonRateThrottle(AnonRateThrottle):
+    cache = caches['alternate']  # Use alternate cache backend
+```
+
+**Remember**: Set your custom throttle class in `'DEFAULT_THROTTLE_CLASSES'` settings key, or using the `throttle_classes` view attribute.
+
+### A Note on Concurrency
+
+**Race Conditions**:
+- The built-in throttle implementations are open to race conditions
+- Under high concurrency, they may allow a few extra requests through
+- This is due to non-atomic operations in the cache framework
+
+**When to Implement Custom Throttles**:
+- If your project relies on guaranteeing the exact number of requests during concurrent requests
+- If you need stricter rate limiting
+- If you need custom throttling logic beyond what built-in throttles provide
+
+**For production applications requiring strict rate limiting**, consider implementing your own throttle class with atomic operations or using external rate limiting services.
+
+### API Reference
+
+#### AnonRateThrottle
+
+**What it does**: The `AnonRateThrottle` will only ever throttle **unauthenticated users**. The IP address of the incoming request is used to generate a unique key to throttle against.
+
+**How rate is determined** (in order of preference):
+1. The `rate` property on the class (if you override `AnonRateThrottle` and set the property)
+2. The `DEFAULT_THROTTLE_RATES['anon']` setting
+
+**When to use**:
+- Restrict the rate of requests from unknown sources
+- Protect against anonymous abuse
+- Encourage user registration
+
+**Example**:
+```python
+# core/settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',  # 100 requests per hour for anonymous users
+    }
+}
+```
+
+#### UserRateThrottle
+
+**What it does**: The `UserRateThrottle` will throttle users to a given rate of requests across the API. The user id is used to generate a unique key to throttle against. Unauthenticated requests will fall back to using the IP address of the incoming request.
+
+**How rate is determined** (in order of preference):
+1. The `rate` property on the class (if you override `UserRateThrottle` and set the property)
+2. The `DEFAULT_THROTTLE_RATES['user']` setting
+
+**When to use**:
+- Simple global rate restrictions per-user
+- Fair usage policies
+- Prevent individual users from overusing the API
+
+**Example**:
+```python
+# core/settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '1000/hour',  # 1000 requests per hour for authenticated users
+    }
+}
+```
+
+**Multiple User Throttles (Scoped Throttles)**:
+An API may have multiple `UserRateThrottles` in place at the same time. Override `UserRateThrottle` and set a unique "scope" for each class:
 
 ```python
 # api/throttles.py
 from rest_framework.throttling import UserRateThrottle
 
+class BurstRateThrottle(UserRateThrottle):
+    scope = 'burst'
+
+class SustainedRateThrottle(UserRateThrottle):
+    scope = 'sustained'
+```
+
+```python
+# core/settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'api.throttles.BurstRateThrottle',
+        'api.throttles.SustainedRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'burst': '60/min',      # 60 requests per minute
+        'sustained': '1000/day'  # 1000 requests per day
+    }
+}
+```
+
+**What this means**:
+- Users are limited to 60 requests per minute (burst limit)
+- Users are also limited to 1000 requests per day (sustained limit)
+- Both limits apply simultaneously
+- Useful for preventing both short-term spikes and long-term overuse
+
+#### ScopedRateThrottle
+
+**What it does**: The `ScopedRateThrottle` class can be used to restrict access to **specific parts of the API**. This throttle will only be applied if the view that is being accessed includes a `.throttle_scope` property.
+
+**How it works**:
+- The unique throttle key is formed by concatenating the "scope" of the request with the unique user id or IP address
+- The allowed request rate is determined by the `DEFAULT_THROTTLE_RATES` setting using a key from the request "scope"
+
+**When to use**:
+- Different rate limits for different API endpoints
+- Protect resource-intensive endpoints
+- Implement tiered access (e.g., read vs write operations)
+
+**Example**:
+```python
+# api/views.py
+from rest_framework.views import APIView
+
+class ContactListView(APIView):
+    throttle_scope = 'contacts'
+    # ...
+
+class ContactDetailView(APIView):
+    throttle_scope = 'contacts'
+    # ...
+
+class UploadView(APIView):
+    throttle_scope = 'uploads'
+    # ...
+```
+
+```python
+# core/settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'contacts': '1000/day',  # 1000 requests per day for contact views
+        'uploads': '20/day'       # 20 requests per day for upload views
+    }
+}
+```
+
+**What this means**:
+- User requests to either `ContactListView` or `ContactDetailView` would be restricted to a total of 1000 requests per day
+- User requests to `UploadView` would be restricted to 20 requests per day
+- Different scopes allow different rate limits for different parts of your API
+
+### Custom Throttles
+
+**Creating Custom Throttles**:
+To create a custom throttle, override `BaseThrottle` and implement `.allow_request(self, request, view)`. The method should return `True` if the request should be allowed, and `False` otherwise.
+
+**Optional `.wait()` Method**:
+You may also override the `.wait()` method. If implemented, `.wait()` should return a recommended number of seconds to wait before attempting the next request, or `None`. The `.wait()` method will only be called if `.allow_request()` has previously returned `False`.
+
+**Retry-After Header**:
+If the `.wait()` method is implemented and the request is throttled, then a `Retry-After` header will be included in the response, telling the client how long to wait.
+
+**Example 1: Random Rate Throttle**:
+```python
+# api/throttles.py
+import random
+from rest_framework import throttling
+
+class RandomRateThrottle(throttling.BaseThrottle):
+    """
+    Randomly throttle 1 in every 10 requests.
+    """
+    def allow_request(self, request, view):
+        return random.randint(1, 10) != 1
+```
+
+**Example 2: Custom Throttle with Wait Time**:
+```python
+# api/throttles.py
+from rest_framework import throttling
+from django.core.cache import cache
+from django.utils import timezone
+
+class CustomRateThrottle(throttling.BaseThrottle):
+    """
+    Custom throttle that limits to 10 requests per minute per IP.
+    """
+    def allow_request(self, request, view):
+        # Get client IP
+        ip = self.get_ident(request)
+        
+        # Create cache key
+        cache_key = f'throttle_{ip}'
+        
+        # Get current request count
+        request_count = cache.get(cache_key, 0)
+        
+        # Check if limit exceeded
+        if request_count >= 10:
+            return False
+        
+        # Increment count
+        cache.set(cache_key, request_count + 1, 60)  # Expire in 60 seconds
+        return True
+    
+    def wait(self):
+        """
+        Return number of seconds to wait before next request.
+        """
+        return 60  # Wait 60 seconds
+    
+    def get_ident(self, request):
+        """
+        Identify the client by IP address.
+        """
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
+```
+
+**Usage**:
+```python
+# api/views.py
+from rest_framework import viewsets
+from .throttles import CustomRateThrottle
+
+class BookViewSet(viewsets.ModelViewSet):
+    throttle_classes = [CustomRateThrottle]
+    # ...
+```
+
+### Custom Throttling Example
+
+**Per-Action Custom Throttle**:
+```python
+# api/throttles.py
+from rest_framework.throttling import UserRateThrottle
+
 class BookCreateThrottle(UserRateThrottle):
-    rate = '5/day'
+    rate = '5/day'  # Limit book creation to 5 per day
 ```
 
 ```python
 # api/views.py
+from rest_framework import viewsets
+from .throttles import BookCreateThrottle
+from .models import Book
+from .serializers import BookSerializer
+
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    
+    def get_throttles(self):
+        """
+        Override to apply different throttles to different actions.
+        """
+        if self.action == 'create':
+            return [BookCreateThrottle()]
+        return super().get_throttles()
+```
+
+**Alternative: Using throttle_classes attribute**:
+```python
+# api/views.py
+from rest_framework import viewsets
+from rest_framework.decorators import action
 from .throttles import BookCreateThrottle
 
 class BookViewSet(viewsets.ModelViewSet):
-    throttle_classes = [BookCreateThrottle]
-    # ...
+    throttle_classes = [UserRateThrottle]  # Default for all actions
+    
+    @action(detail=False, methods=['post'], throttle_classes=[BookCreateThrottle])
+    def create_book(self, request):
+        # This action uses BookCreateThrottle
+        # ...
 ```
 
 ## Exception Handling
@@ -1634,68 +1416,98 @@ class BookViewSet(viewsets.ModelViewSet):
 
 ```python
 # api/exceptions.py (create this file)
+# Import DRF's default exception handler - we'll call it first
 from rest_framework.views import exception_handler
+# Import Response to return custom error responses
 from rest_framework.response import Response
+# Import HTTP status codes
 from rest_framework import status
+# Import Django settings to check DEBUG mode
 from django.conf import settings
+# Import logging to log errors for debugging
 import logging
 
+# Create logger for this module
+# Logs will help you debug issues in production
 logger = logging.getLogger(__name__)
 
+# Custom exception handler function
+# DRF calls this function whenever an exception occurs in a view
+# exc = the exception that was raised
+# context = dictionary with request, view, and other context
 def custom_exception_handler(exc, context):
     """
     Custom exception handler for DRF.
     Returns consistent error format for all exceptions.
     """
-    # Call DRF's default exception handler first
+    # Step 1: Call DRF's default exception handler first
+    # This handles common DRF exceptions (ValidationError, PermissionDenied, etc.)
+    # Returns Response object if it handled the exception, None otherwise
     response = exception_handler(exc, context)
     
-    # If DRF handled it, customize the response
+    # Step 2: If DRF handled it, customize the response format
     if response is not None:
+        # Create custom error response structure
+        # This ensures all errors follow the same format
         custom_response_data = {
-            'success': False,
+            'success': False,  # Quick indicator that request failed
             'error': {
-                'status_code': response.status_code,
-                'message': get_error_message(response.status_code, exc),
-                'details': response.data,
-                'type': exc.__class__.__name__
+                'status_code': response.status_code,  # HTTP status code (400, 401, 403, etc.)
+                'message': get_error_message(response.status_code, exc),  # User-friendly message
+                'details': response.data,  # Detailed error information
+                'type': exc.__class__.__name__  # Exception class name (for debugging)
             }
         }
+        # Replace DRF's default error format with our custom format
         response.data = custom_response_data
         
-        # Log error for debugging
+        # Log error for debugging (helps track issues in production)
+        # exc_info=True includes full traceback in logs
         logger.error(f"Error {response.status_code}: {exc}", exc_info=True)
     
-    # Handle exceptions DRF doesn't catch
+    # Step 3: Handle exceptions DRF doesn't catch (unexpected errors)
     else:
-        # For unexpected errors (500)
+        # For unexpected errors (500 Internal Server Error)
+        # These are errors DRF doesn't know how to handle
         custom_response_data = {
             'success': False,
             'error': {
                 'status_code': 500,
                 'message': 'An unexpected error occurred',
+                # In DEBUG mode: show actual error (helpful for development)
+                # In production: show generic message (don't expose sensitive details)
                 'details': str(exc) if settings.DEBUG else 'Internal server error',
                 'type': exc.__class__.__name__
             }
         }
+        # Create new Response for unexpected errors
         response = Response(custom_response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        # Log unexpected errors
+        # Log unexpected errors with full traceback
+        # logger.exception() automatically includes traceback
         logger.exception(f"Unexpected error: {exc}")
     
+    # Return the response (either customized DRF response or new 500 response)
     return response
 
 def get_error_message(status_code, exc):
-    """Get user-friendly error message based on status code"""
+    """
+    Get user-friendly error message based on status code.
+    Converts technical HTTP status codes into readable messages for users.
+    """
+    # Dictionary mapping HTTP status codes to user-friendly messages
+    # These messages are shown to API clients (more helpful than just status codes)
     messages = {
-        400: 'Invalid request data',
-        401: 'Authentication required',
-        403: 'Permission denied',
-        404: 'Resource not found',
-        405: 'Method not allowed',
-        429: 'Too many requests',
-        500: 'Internal server error',
+        400: 'Invalid request data',  # Bad Request - client sent invalid data
+        401: 'Authentication required',  # Unauthorized - need to login
+        403: 'Permission denied',  # Forbidden - logged in but no permission
+        404: 'Resource not found',  # Not Found - resource doesn't exist
+        405: 'Method not allowed',  # Method Not Allowed - wrong HTTP method
+        429: 'Too many requests',  # Too Many Requests - rate limit exceeded
+        500: 'Internal server error',  # Internal Server Error - server problem
     }
+    # Return message for status code, or default message if status code not in dictionary
+    # .get() returns None if key not found, so we provide default 'An error occurred'
     return messages.get(status_code, 'An error occurred')
 ```
 
@@ -1703,8 +1515,14 @@ def get_error_message(status_code, exc):
 
 ```python
 # core/settings.py
+# DRF configuration
 REST_FRAMEWORK = {
-    # ... other settings ...
+    # ... other settings (authentication, permissions, etc.) ...
+    
+    # Set custom exception handler
+    # This tells DRF to use our custom_exception_handler function instead of the default one
+    # Path format: 'app_name.module_name.function_name'
+    # When any exception occurs in any view, DRF will call this function
     'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler',
 }
 ```
@@ -1788,6 +1606,7 @@ def custom_exception_handler(exc, context):
 
 ```python
 # api/exceptions.py
+from rest_framework.views import exception_handler
 from rest_framework.exceptions import ValidationError
 
 def custom_exception_handler(exc, context):
@@ -1835,6 +1654,7 @@ def custom_exception_handler(exc, context):
 
 ```python
 # api/exceptions.py
+from rest_framework.views import exception_handler
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 def custom_exception_handler(exc, context):
@@ -1887,7 +1707,9 @@ def custom_exception_handler(exc, context):
 
 ```python
 # api/exceptions.py
+from rest_framework.views import exception_handler
 from django.conf import settings
+import traceback
 
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
@@ -1907,8 +1729,8 @@ def custom_exception_handler(exc, context):
         else:
             # Production: don't expose sensitive details
             error_details = {
-                'message': get_error_message(response.status_code, exc),
-                'code': get_error_code(response.status_code)
+                'message': get_error_message(response.status_code, exc) if 'get_error_message' in globals() else 'An error occurred',
+                'code': 'error'
             }
         
         custom_response_data = {
@@ -2250,446 +2072,50 @@ curl -X POST http://localhost:8000/api/token/refresh/ \
 
 ## Exercises
 
-### Exercise 1: Complete Secure Book API
+### Exercise 1: Complete Secure Book API (Filtering & Pagination)
 
-1. Add owner field to Book model
-2. Implement IsOwnerOrReadOnly permission
-3. Add filtering by author and date range
-4. Add search functionality
-5. Add pagination
-6. Test all endpoints with cURL
+1. Add filtering by author and date range to Book API
+2. Add search functionality across title, author, and description
+3. Add ordering by title, author, published_date, and created_at
+4. Implement pagination (PageNumberPagination with 10 items per page)
+5. Test all filtering, searching, ordering, and pagination with cURL
 
-### Exercise 2: UserProfile API
-
-1. Create UserProfile model
-2. Create UserProfileSerializer and ViewSet
-3. Allow users to view/edit only their own profile
-4. Test with cURL
-
-### Exercise 3: Task Filtering
+### Exercise 2: Task Filtering & Searching
 
 1. Add priority field to Task model
-2. Create TaskFilter with priority filtering
-3. Add ordering by priority
-4. Test filtering and ordering
+2. Create TaskFilter with priority filtering and date range filtering
+3. Add search functionality for title and description
+4. Add ordering by priority, title, and created_at
+5. Test filtering, searching, and ordering with cURL
 
-## Add-ons
+### Exercise 3: Custom Exception Handler
 
-### Add-on 1: Custom JWT Claims
+1. Create custom exception handler with consistent error format
+2. Add user-friendly error messages for common status codes
+3. Configure exception handler in settings.py
+4. Test error responses (send invalid data, access non-existent resource, etc.)
+5. Verify error format is consistent across all endpoints
 
-```python
-# api/serializers.py
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+### Exercise 4: Advanced Pagination
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token['username'] = user.username
-        token['email'] = user.email
-        return token
-```
-
-```python
-# api/views.py
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer
-
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
-```
-
-### Add-on 2: Rate Limiting
-
-Implement different rate limits for different actions.
-
-### Add-on 3: Permission Mixins
-
-Create reusable permission mixins for common patterns.
+1. Implement LimitOffsetPagination for Book API
+2. Set default_limit to 20 and max_limit to 100
+3. Test pagination with different limit and offset values
+4. Compare with PageNumberPagination (which is easier to use?)
 
 ## Common Errors and Solutions
 
-### Error 1: `rest_framework.exceptions.AuthenticationFailed: Given token not valid for any token type`
+### Error 1: `django_filters.exceptions.FieldNotFound: Field 'title_contains' not found`
 
 **Error Message**:
 ```
-rest_framework.exceptions.AuthenticationFailed: Given token not valid for any token type
+django_filters.exceptions.FieldNotFound: Field 'title_contains' not found
 ```
 
 **Why This Happens**:
-- Token expired
-- Invalid token format
-- Token not sent correctly in header
-- Wrong token type
-
-**How to Fix**:
-```bash
-# Check token format
-# Should be: Authorization: Bearer <token>
-# NOT: Authorization: <token>
-# NOT: Authorization: Token <token>
-
-# Correct format
-curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
-  http://localhost:8000/api/tasks/
-
-# Get new token if expired
-curl -X POST http://localhost:8000/api/token/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "user", "password": "pass"}'
-```
-
-**Prevention**: 
-- Always use `Bearer` prefix for JWT tokens
-- Check token expiration
-- Refresh token before it expires
-
----
-
-### Error 2: `rest_framework.exceptions.PermissionDenied: You do not have permission to perform this action`
-
-**Error Message**:
-```
-rest_framework.exceptions.PermissionDenied: You do not have permission to perform this action
-```
-
-**Why This Happens**:
-- User not authenticated (no token/session)
-- User authenticated but lacks required permissions
-- Permission class too restrictive
-
-**How to Fix**:
-```python
-# Check if user is authenticated
-# In view, check:
-print(request.user)  # Should be User object, not AnonymousUser
-print(request.user.is_authenticated)  # Should be True
-
-# Check permissions
-# Option 1: Make endpoint public (if appropriate)
-class TaskViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # Anyone can access (rare for tasks)
-
-# Option 2: Require authentication (most common for tasks)
-class TaskViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]  # Must be logged in
-
-# Option 3: Custom permission check in class-based view
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-class TaskAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def patch(self, request, pk):
-        # Check custom permission
-        if not request.user.has_perm('api.change_task'):
-            return Response(
-                {'error': 'Permission denied'}, 
-                status=status.HTTP_403_FORBIDDEN
-            )
-        # ... rest of logic
-```
-
-**Prevention**: 
-- Check permission classes in view
-- Verify user is authenticated before accessing protected endpoints
-- Test with different user roles
-
----
-
-### Error 3: `django.contrib.auth.models.User.DoesNotExist: User matching query does not exist`
-
-**Error Message**:
-```
-django.contrib.auth.models.User.DoesNotExist: User matching query does not exist
-```
-
-**Why This Happens**:
-- Trying to get user that doesn't exist
-- User ID in token doesn't match any user
-- User was deleted but token still valid
-
-**How to Fix**:
-```python
-# Option 1: Check if user exists
-try:
-    user = User.objects.get(id=user_id)
-except User.DoesNotExist:
-    return Response({'error': 'User not found'}, status=404)
-
-# Option 2: Use get_object_or_404
-from django.shortcuts import get_object_or_404
-user = get_object_or_404(User, id=user_id)
-
-# Option 3: Handle in JWT token validation
-# In custom token serializer, verify user exists
-def validate(self, attrs):
-    user = authenticate(**attrs)
-    if not user or not user.is_active:
-        raise serializers.ValidationError('User not found or inactive')
-    return attrs
-```
-
-**Prevention**: Always verify user exists before using, especially in token validation.
-
----
-
-### Error 4: `django_filters.exceptions.FieldLookupError: Unsupported lookup 'icontains' for CharField`
-
-**Error Message**:
-```
-django_filters.exceptions.FieldLookupError: Unsupported lookup 'icontains' for CharField
-```
-
-**Why This Happens**:
-- Using wrong lookup expression in FilterSet
-- Lookup not supported for field type
-- Typo in lookup expression
-
-**How to Fix**:
-```python
-# WRONG - icontains not available in basic filterset_fields
-class TaskViewSet(viewsets.ModelViewSet):
-    filterset_fields = ['title__icontains']  # ❌ Not supported
-
-# CORRECT - Use FilterSet class
-class TaskFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(lookup_expr='icontains')  # ✅
-    
-    class Meta:
-        model = Task
-        fields = ['title']
-
-# In ViewSet
-class TaskViewSet(viewsets.ModelViewSet):
-    filterset_class = TaskFilter  # ✅
-```
-
-**Prevention**: Use FilterSet class for advanced lookups, not `filterset_fields`.
-
----
-
-### Error 5: `rest_framework.exceptions.ValidationError: {'refresh': ['This field is required.']}`
-
-**Error Message**:
-```
-rest_framework.exceptions.ValidationError: {'refresh': ['This field is required.']}
-```
-
-**Why This Happens**:
-- Trying to refresh token without providing refresh token
-- Sending access token instead of refresh token
-- Missing refresh token in request
-
-**How to Fix**:
-```bash
-# WRONG - Using access token
-curl -X POST http://localhost:8000/api/token/refresh/ \
-  -H "Content-Type: application/json" \
-  -d '{"refresh": "access_token_here"}'  # ❌ Wrong token type
-
-# CORRECT - Use refresh token
-curl -X POST http://localhost:8000/api/token/refresh/ \
-  -H "Content-Type: application/json" \
-  -d '{"refresh": "refresh_token_here"}'  # ✅ Correct
-
-# Get tokens first
-TOKENS=$(curl -X POST http://localhost:8000/api/token/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "user", "password": "pass"}')
-
-# Extract refresh token
-REFRESH=$(echo $TOKENS | jq -r '.refresh')
-
-# Use refresh token
-curl -X POST http://localhost:8000/api/token/refresh/ \
-  -H "Content-Type: application/json" \
-  -d "{\"refresh\": \"$REFRESH\"}"
-```
-
-**Prevention**: 
-- Store both access and refresh tokens
-- Use refresh token only for refreshing
-- Don't confuse access and refresh tokens
-
----
-
-### Error 6: `django.core.exceptions.FieldError: Related Field got invalid lookup: icontains`
-
-**Error Message**:
-```
-django.core.exceptions.FieldError: Related Field got invalid lookup: icontains
-```
-
-**Why This Happens**:
-- Using wrong lookup on ForeignKey field
-- Need to use double underscore for related fields
-
-**How to Fix**:
-```python
-# WRONG - Can't use icontains directly on ForeignKey
-Task.objects.filter(owner__icontains='john')  # ❌
-
-# CORRECT - Use double underscore to access related field
-Task.objects.filter(owner__username__icontains='john')  # ✅
-
-# Or in FilterSet
-class TaskFilter(django_filters.FilterSet):
-    owner_username = django_filters.CharFilter(
-        field_name='owner__username',
-        lookup_expr='icontains'
-    )
-    
-    class Meta:
-        model = Task
-        fields = ['owner_username']
-```
-
-**Prevention**: Remember to use `__` (double underscore) to traverse relationships.
-
----
-
-### Error 7: `rest_framework.exceptions.NotFound: Invalid page.`
-
-**Error Message**:
-```
-rest_framework.exceptions.NotFound: Invalid page.
-```
-
-**Why This Happens**:
-- Requesting page number that doesn't exist
-- Page number out of range
-- Invalid page parameter
-
-**How to Fix**:
-```python
-# Check total pages first
-# Response includes: {"count": 100, "next": "...", "previous": "..."}
-
-# WRONG - Page 999 when only 10 pages exist
-curl -H "Authorization: Bearer $TOKEN" \
-  "http://localhost:8000/api/tasks/?page=999"  # ❌
-
-# CORRECT - Check count first, then request valid page
-# If count=100 and page_size=10, valid pages are 1-10
-
-# Handle in frontend
-response = fetch('/api/tasks/?page=1', {
-    headers: { 'Authorization': `Bearer ${token}` }
-})
-data = await response.json()
-total_pages = Math.ceil(data.count / page_size)  # Calculate total pages
-if (page > total_pages) {
-    // Show error or redirect to last page
-}
-```
-
-**Prevention**: 
-- Always check `count` in pagination response
-- Calculate total pages: `ceil(count / page_size)`
-- Validate page number before requesting
-
----
-
-### Error 8: `django.db.utils.IntegrityError: NOT NULL constraint failed: api_task.owner_id`
-
-**Error Message**:
-```
-django.db.utils.IntegrityError: NOT NULL constraint failed: api_task.owner_id
-```
-
-**Why This Happens**:
-- Trying to create object without required ForeignKey
-- Owner not set in serializer
-- `perform_create` not setting owner
-
-**How to Fix**:
-```python
-# WRONG - Standalone function (not recommended, use CBV instead)
-# This is what NOT to do:
-def create_task(request):  # ❌ Function-based view
-    serializer = TaskSerializer(data=request.data)
-    serializer.save()  # ❌ Owner not set!
-
-# CORRECT - Class-based ViewSet approach (recommended)
-class TaskViewSet(viewsets.ModelViewSet):
-    serializer_class = TaskSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)  # ✅ Owner set automatically
-
-# Alternative: Set owner in serializer (also class-based)
-class TaskSerializer(serializers.ModelSerializer):
-    def create(self, validated_data):
-        validated_data['owner'] = self.context['request'].user
-        return super().create(validated_data)
-```
-
-**Note**: Always use class-based views (`ViewSet`, `APIView`) instead of function-based views. The `perform_create()` method is part of the class-based ViewSet, not a standalone function.
-
-**Prevention**: Always set owner in `perform_create` or serializer's `create` method.
-
----
-
-### Error 9: `rest_framework.exceptions.MethodNotAllowed: Method 'PATCH' not allowed`
-
-**Error Message**:
-```
-rest_framework.exceptions.MethodNotAllowed: Method 'PATCH' not allowed
-```
-
-**Why This Happens**:
-- View doesn't support PATCH method
-- Using wrong HTTP method
-- ViewSet action not configured
-
-**How to Fix**:
-```python
-# Check what methods are allowed
-# ViewSet automatically supports: GET, POST, PUT, PATCH, DELETE
-
-# Option 1: Use ViewSet (recommended - automatic method support)
-class TaskViewSet(viewsets.ModelViewSet):  # ✅ Supports PATCH automatically
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-    # PATCH method works automatically, no need to define it
-
-# Option 2: Use APIView with explicit method (if you need custom logic)
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
-class TaskAPIView(APIView):
-    def patch(self, request, pk):  # ✅ Must explicitly define PATCH method
-        task = Task.objects.get(pk=pk)
-        serializer = TaskSerializer(task, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-```
-
-**Prevention**: 
-- ✅ **Use ViewSet** for automatic method support (recommended)
-- ✅ **Use APIView** only when you need custom logic
-- ❌ **Avoid function-based views** - use class-based approach
-- Check allowed methods in view
-
----
-
-### Error 10: `django_filters.exceptions.FieldError: Meta.fields contains fields that are not defined on this FilterSet`
-
-**Error Message**:
-```
-django_filters.exceptions.FieldError: Meta.fields contains fields that are not defined on this FilterSet
-```
-
-**Why This Happens**:
-- Field in `Meta.fields` not defined in FilterSet
-- Typo in field name
-- Field doesn't exist in model
+- Trying to filter by field that doesn't exist in model
+- Field name typo in filterset_fields
+- Custom filter field not defined before using in Meta.fields
 
 **How to Fix**:
 ```python
@@ -2703,9 +2129,10 @@ class TaskFilter(django_filters.FilterSet):
 
 # CORRECT - Define field first
 class TaskFilter(django_filters.FilterSet):
+    # Define custom filter field
     title_contains = django_filters.CharFilter(
-        field_name='title',
-        lookup_expr='icontains'
+        field_name='title',  # Model field name
+        lookup_expr='icontains'  # Lookup type
     )
     
     class Meta:
@@ -2717,83 +2144,256 @@ class TaskFilter(django_filters.FilterSet):
 
 ---
 
-### General Debugging Tips for Level 2
+### Error 2: `rest_framework.exceptions.ParseError: Malformed request`
 
-**1. Check Authentication**
-```python
-# In view, verify authentication
-print("User:", request.user)
-print("Authenticated:", request.user.is_authenticated)
-print("Is anonymous:", isinstance(request.user, AnonymousUser))
+**Error Message**:
+```
+rest_framework.exceptions.ParseError: Malformed request
 ```
 
-**2. Test Permissions**
-```python
-# Check what permissions user has
-print("Permissions:", request.user.get_all_permissions())
-print("Is staff:", request.user.is_staff)
-print("Is superuser:", request.user.is_superuser)
-```
+**Why This Happens**:
+- Invalid JSON in request body
+- Missing Content-Type header
+- Malformed query parameters
 
-**3. Verify Token**
-```python
-# Decode JWT token to see contents
-from rest_framework_simplejwt.tokens import AccessToken
-
-token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
-decoded = AccessToken(token)
-print("Token payload:", decoded.payload)
-```
-
-**4. Test Filters**
+**How to Fix**:
 ```bash
-# Test each filter separately
-curl -H "Authorization: Bearer $TOKEN" \
-  "http://localhost:8000/api/tasks/?completed=false"
-curl -H "Authorization: Bearer $TOKEN" \
-  "http://localhost:8000/api/tasks/?search=django"
-curl -H "Authorization: Bearer $TOKEN" \
-  "http://localhost:8000/api/tasks/?ordering=-created_at"
+# WRONG - Missing Content-Type header
+curl -X POST http://localhost:8000/api/tasks/ \
+  -d '{"title": "Task"}'
+
+# CORRECT - Include Content-Type header
+curl -X POST http://localhost:8000/api/tasks/ \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"title": "Task"}'
+
+# WRONG - Invalid JSON
+curl -X POST http://localhost:8000/api/tasks/ \
+  -H "Content-Type: application/json" \
+  -d '{title: "Task"}'  # ❌ Missing quotes around key
+
+# CORRECT - Valid JSON
+curl -X POST http://localhost:8000/api/tasks/ \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Task"}'  # ✅ Valid JSON
 ```
 
-**5. Check Pagination**
+**Prevention**: 
+- Always include `Content-Type: application/json` header
+- Validate JSON syntax before sending
+- Use proper JSON formatting
+
+---
+
+### Error 3: `django.core.exceptions.FieldError: Cannot resolve keyword 'title__icontains' into field`
+
+**Error Message**:
+```
+django.core.exceptions.FieldError: Cannot resolve keyword 'title__icontains' into field
+```
+
+**Why This Happens**:
+- Using lookup expression in wrong place
+- Field doesn't exist in model
+- Typo in field name
+
+**How to Fix**:
 ```python
-# Verify pagination settings
+# WRONG - Using lookup expression directly in filterset_fields
+class TaskViewSet(viewsets.ModelViewSet):
+    filterset_fields = ['title__icontains']  # ❌ Can't use lookup expressions here
+
+# CORRECT - Use FilterSet with custom field
+class TaskFilter(django_filters.FilterSet):
+    title = django_filters.CharFilter(lookup_expr='icontains')  # ✅ Define in FilterSet
+    
+    class Meta:
+        model = Task
+        fields = ['title']
+
+class TaskViewSet(viewsets.ModelViewSet):
+    filterset_class = TaskFilter  # ✅ Use FilterSet
+```
+
+**Prevention**: 
+- Use `filterset_fields` only for exact matches
+- Use `FilterSet` for advanced lookups (icontains, gte, lte, etc.)
+
+---
+
+### Error 4: `rest_framework.exceptions.NotFound: Invalid page.`
+
+**Error Message**:
+```
+rest_framework.exceptions.NotFound: Invalid page.
+```
+
+**Why This Happens**:
+- Requesting page number that doesn't exist
+- Invalid page parameter format
+- Page number out of range
+
+**How to Fix**:
+```bash
+# WRONG - Page number too high (only 5 pages exist, requesting page 10)
+curl "http://localhost:8000/api/tasks/?page=10"
+
+# CORRECT - Check total pages first
+curl "http://localhost:8000/api/tasks/" | jq '.count, .next, .previous'
+
+# WRONG - Invalid page format
+curl "http://localhost:8000/api/tasks/?page=abc"  # ❌ Not a number
+
+# CORRECT - Use valid page number
+curl "http://localhost:8000/api/tasks/?page=1"  # ✅ Valid
+```
+
+**Prevention**: 
+- Always check response for `count` and `next` fields
+- Handle pagination errors in client code
+- Validate page numbers before making requests
+
+---
+
+### Error 5: Filtering not working - all results returned
+
+**Problem**: Filtering doesn't work, returns all results instead of filtered results.
+
+**Why This Happens**:
+- Filter backend not configured
+- FilterSet not assigned to view
+- Field name mismatch
+
+**How to Fix**:
+```python
+# WRONG - Missing filter backend
+class TaskViewSet(viewsets.ModelViewSet):
+    filterset_fields = ['completed']  # ❌ No filter_backends!
+
+# CORRECT - Add filter backend
+class TaskViewSet(viewsets.ModelViewSet):
+    filter_backends = [DjangoFilterBackend]  # ✅ Enable filtering
+    filterset_fields = ['completed']
+
+# WRONG - FilterSet not assigned
+class TaskFilter(django_filters.FilterSet):
+    # ... filter definition ...
+
+class TaskViewSet(viewsets.ModelViewSet):
+    # filterset_class not set!  # ❌
+
+# CORRECT - Assign FilterSet
+class TaskViewSet(viewsets.ModelViewSet):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TaskFilter  # ✅ Use FilterSet
+```
+
+**Prevention**: 
+- Always include filter backend in `filter_backends`
+- Assign `filterset_class` when using FilterSet
+- Verify filter configuration in view
+
+---
+
+### General Debugging Tips for Level 2B
+
+**1. Test Filters Separately**
+```bash
+# Test each filter individually
+curl "http://localhost:8000/api/tasks/?completed=false"
+curl "http://localhost:8000/api/tasks/?created_after=2024-01-01"
+curl "http://localhost:8000/api/tasks/?title=django"
+```
+
+**2. Check Filter Configuration**
+```python
+# In view, verify filter setup
+print("Filter backends:", self.filter_backends)
+print("FilterSet class:", self.filterset_class)
+print("Search fields:", self.search_fields)
+print("Ordering fields:", self.ordering_fields)
+```
+
+**3. Verify Pagination**
+```python
+# Check pagination settings
 from rest_framework.pagination import PageNumberPagination
 pagination = PageNumberPagination()
 print("Page size:", pagination.page_size)
 ```
 
-**6. Common Authentication Issues**
-- **Token expired**: Get new token or refresh
-- **Wrong header format**: Use `Authorization: Bearer <token>`
-- **Token not sent**: Check request headers
-- **User inactive**: Check `user.is_active`
+**4. Test Exception Handler**
+```bash
+# Test different error scenarios
+# Invalid data
+curl -X POST http://localhost:8000/api/tasks/ \
+  -H "Content-Type: application/json" \
+  -d '{"invalid": "data"}'
 
-**7. Common Permission Issues**
-- **Too restrictive**: Check permission classes
-- **User not authenticated**: Verify token/session
-- **Wrong user**: Check if user owns resource
-- **Missing permission**: Verify user has required permission
+# Non-existent resource
+curl http://localhost:8000/api/tasks/99999/
+```
+
+## Add-ons
+
+### Add-on 1: Custom Filter Backend
+
+Create a custom filter backend for advanced filtering logic:
+
+```python
+# api/filters.py
+from rest_framework.filters import BaseFilterBackend
+
+class CustomFilterBackend(BaseFilterBackend):
+    """
+    Custom filter backend for complex filtering logic.
+    """
+    def filter_queryset(self, request, queryset, view):
+        # Add custom filtering logic here
+        if request.query_params.get('my_custom_filter'):
+            queryset = queryset.filter(...)
+        return queryset
+```
+
+### Add-on 2: Custom Pagination Class
+
+Create a custom pagination class with additional metadata:
+
+```python
+# api/pagination.py
+from rest_framework.pagination import PageNumberPagination
+
+class CustomPageNumberPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+    
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        # Add custom metadata
+        response.data['custom_field'] = 'custom_value'
+        return response
+```
 
 ## Next Steps
 
-Congratulations! You've completed Level 2. You now know:
+Congratulations! You've completed Level 2B. You now know:
 
-- ✅ Django authentication system
-- ✅ JWT authentication setup
-- ✅ Permissions (built-in and custom)
-- ✅ Filtering, searching, and ordering
+- ✅ Filtering with django-filter
+- ✅ Searching across multiple fields
+- ✅ Ordering and sorting results
 - ✅ Pagination strategies
-- ✅ Building secure APIs
+- ✅ Exception handling
+- ✅ Testing authenticated APIs
 
-**Ready for Level 3?** Continue to [Level 3: Advanced](LEVEL_3_ADVANCED.md) to learn about relationships, nested serializers, and query optimization!
+**Ready for Level 3?** Continue to [Level 3A: Advanced - Relationships & Query Optimization](LEVEL_3A_ADVANCED.md) to learn about model relationships, nested serializers, and query optimization!
 
 ---
 
 **Resources:**
-- [DRF Authentication](https://www.django-rest-framework.org/api-guide/authentication/)
-- [DRF Permissions](https://www.django-rest-framework.org/api-guide/permissions/)
-- [djangorestframework-simplejwt](https://github.com/jazzband/djangorestframework-simplejwt)
+- [DRF Filtering](https://www.django-rest-framework.org/api-guide/filtering/)
+- [DRF Searching](https://www.django-rest-framework.org/api-guide/filtering/#searchfilter)
+- [DRF Pagination](https://www.django-rest-framework.org/api-guide/pagination/)
 - [django-filter](https://django-filter.readthedocs.io/)
 

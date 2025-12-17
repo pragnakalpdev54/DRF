@@ -4,6 +4,29 @@
 
 Build enterprise-grade, production-ready Django APIs. Master GraphQL, WebSockets, advanced testing, CI/CD, monitoring, and deployment. By the end of this level, you'll be able to build and deploy scalable, observable APIs.
 
+## Note on Examples
+
+This guide uses a **mix of Task and Book API examples** depending on which best illustrates each expert-level concept:
+
+- **Task API**: Used for:
+  - Analytics and aggregation examples (task statistics)
+  - Real-time features (WebSocket task updates)
+  - Production deployment patterns
+  - Monitoring and observability
+  
+- **Book API**: Used for:
+  - GraphQL examples (book queries/mutations)
+  - Some async patterns
+  - When a simpler model better demonstrates the concept
+
+**Why mixed examples?**
+- **Best fit**: Each example is chosen to best illustrate the specific expert concept
+- **Flexibility**: Shows that patterns work with any model
+- **Real-world**: Different APIs have different needs - this reflects reality
+- **Learning**: Understanding concepts with different models reinforces learning
+
+**Important**: All expert-level patterns (GraphQL, WebSockets, CI/CD, deployment) apply to any API. The examples are just illustrations - you can use these patterns with Task, Book, Product, Post, or any other model.
+
 ## Table of Contents
 
 1. [Async Django](#async-django)

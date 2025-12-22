@@ -5,56 +5,29 @@ use_directory_urls: false
 theme:
   name: material
   custom_dir: overrides
-  palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-
-    - scheme: slate
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-sunny
-        name: Switch to light mode
-
   features:
-  - navigation.instant
-  - navigation.tracking
-  - navigation.expand
-  - navigation.sections
-  - navigation.top
-  - navigation.footer
-  - toc.follow
-  - content.code.copy
+    - navigation.sections
+    - navigation.expand
+    - navigation.instant
+    - toc.integrate
+    - content.code.copy
+    - navigation.footer  
 
 nav:
   - Home: index.md
-
-  - Course Levels:
-      - Level 0 – Beginner: LEVEL_0_BEGINNER.md
-      - Level 1 – Foundations: LEVEL_1_FOUNDATIONS.md
-
-      - Level 2 – Intermediate:
-          - Part A – Core Concepts: LEVEL_2A_INTERMEDIATE.md
-          - Part B – Applied DRF: LEVEL_2B_INTERMEDIATE.md
-
-      - Level 3 – Advanced:
-          - Part A – Internals & Optimization: LEVEL_3A_ADVANCED.md
-          - Part B – Security & Performance: LEVEL_3B_ADVANCED.md
-
-      - Level 4 – Scalable Systems: LEVEL_4_SCALABLE.md
-      - Level 5 – Expert Level: LEVEL_5_EXPERT.md
-
-  - Tools & Extras:
-      - PostgreSQL Setup: POSTGRESQL_SETUP.md
-      - Postman Guide:
-          - Part 1 – Basics: POSTMAN_GUIDE_PART1_BASICS.md
-          - Part 2 – Advanced: POSTMAN_GUIDE_PART2_ADVANCED.md
-      - cURL Guide: CURL_GUIDE.md
-
+  - Level 0 – Beginner: LEVEL_0_BEGINNER.md
+  - Level 1 – Foundations: LEVEL_1_FOUNDATIONS.md
+  - Level 2A – Core: LEVEL_2A_INTERMEDIATE.md
+  - Level 2B – Applied: LEVEL_2B_INTERMEDIATE.md
+  - Level 3A – Internals: LEVEL_3A_ADVANCED.md
+  - Level 3B – Security: LEVEL_3B_ADVANCED.md
+  - Level 4 – Scalable: LEVEL_4_SCALABLE.md
+  - Level 5 – Expert: LEVEL_5_EXPERT.md
+  - PostgreSQL: POSTGRESQL_SETUP.md
+  - Postman Basics: POSTMAN_GUIDE_PART1_BASICS.md
+  - Postman Advanced: POSTMAN_GUIDE_PART2_ADVANCED.md
+  - cURL Guide: CURL_GUIDE.md
+ 
 markdown_extensions:
   - toc:
       permalink: true
@@ -67,11 +40,5 @@ markdown_extensions:
 
 extra_css:
   - assets/stylesheets/footer.css
-  - assets/stylesheets/ui.css
-  
-extra:
-  generator: false
-
-  copyright: |
-    © 2025 Pragnakalp Techlabs · DRF Training Guide  
-    **Made by Rahul, Nikunj, Neel, Dhvanil, Mansi, Darshit**
+  - assets/stylesheets/extra.css
+  - assets/stylesheets/sidebar.css 
